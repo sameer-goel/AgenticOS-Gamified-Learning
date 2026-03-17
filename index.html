@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenClaw Academy — Gamified Interactive Tutorial</title>
+<meta name="description" content="Master AI agents from zero to hero with OpenClaw Academy — an interactive gamified tutorial with 8 zones, 31 levels, challenges, badges, and real-world stories from practitioners.">
+<meta property="og:title" content="OpenClaw Academy — Gamified Interactive Tutorial">
+<meta property="og:description" content="Master AI agents from zero to hero — 8 zones, 31 levels, challenges, badges, and real-world stories. Learn OpenClaw the fun way.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0A0A0F">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#0A0A0F;--bg2:#12121A;--bg3:#1A1A2E;--bg-hover:#22223A;
+--text:#E8E8F0;--text2:#8888AA;--success:#39FF14;--error:#FF2D55;--locked:#444466;
+--gold:#FFD700;
+--z1:#00F0FF;--z2:#BF00FF;--z3:#39FF14;--z4:#FFD700;--z5:#FF1493;--z6:#FF6B00;--z7:#FF2D55;--z8:#0080FF;
+--font-head:'Orbitron',sans-serif;--font-body:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace;
+--sidebar-w:260px;
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;overflow-x:hidden}
+h1,h2,h3,h4{font-family:var(--font-head);font-weight:700;letter-spacing:0.5px}
+code,.mono{font-family:var(--font-mono)}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--font-body);cursor:pointer;border:none;background:none;color:var(--text)}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
+
+/* ===== TOP BAR ===== */
+#topbar{position:fixed;top:0;left:0;right:0;height:56px;background:var(--bg2);border-bottom:1px solid #ffffff10;display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:100;backdrop-filter:blur(10px)}
+#topbar .logo{font-family:var(--font-head);font-size:1.1rem;font-weight:900;display:flex;align-items:center;gap:8px}
+#topbar .logo span{background:linear-gradient(135deg,var(--z1),var(--z2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.top-stats{display:flex;align-items:center;gap:16px;font-size:0.85rem}
+.top-stats .stat{display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;background:#ffffff08}
+</style>
+<style>
+.xp-display{color:var(--gold);font-weight:700;font-family:var(--font-head);font-size:0.9rem;text-shadow:0 0 10px #FFD70060}
+.rank-display{color:var(--z2);font-size:0.85rem}
+#sound-toggle{font-size:1.2rem;padding:4px 8px;border-radius:8px;background:#ffffff08;cursor:pointer;transition:all .3s ease}
+#sound-toggle:hover{background:#ffffff15}
+#mobile-menu{display:none;font-size:1.4rem;padding:4px 8px;cursor:pointer}
+
+/* ===== SIDEBAR ===== */
+#sidebar{position:fixed;top:56px;left:0;bottom:0;width:var(--sidebar-w);background:var(--bg3);border-right:1px solid #ffffff10;overflow-y:auto;z-index:90;transition:transform .3s ease}
+.sidebar-section{padding:12px 16px}
+.sidebar-section h3{font-size:0.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--text2);margin-bottom:8px}
+.zone-item{padding:8px 12px;border-radius:8px;cursor:pointer;transition:all .3s ease;margin-bottom:2px;font-size:0.9rem;display:flex;align-items:center;gap:8px}
+.zone-item:hover{background:var(--bg-hover)}
+.zone-item.active{background:#ffffff10}
+.zone-item .zone-status{font-size:0.8rem}
+.zone-item.locked{opacity:0.4;cursor:default}
+.level-item{padding:6px 12px 6px 32px;border-radius:6px;cursor:pointer;transition:all .3s ease;font-size:0.85rem;display:flex;align-items:center;gap:6px;color:var(--text2)}
+.level-item:hover:not(.locked){background:var(--bg-hover);color:var(--text)}
+.level-item.active{color:var(--text);background:#ffffff10}
+.level-item.completed{color:var(--success)}
+.level-item.locked{opacity:0.35;cursor:default}
+.zone-levels{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.zone-levels.open{max-height:500px}
+.sidebar-nav{border-top:1px solid #ffffff10;padding:12px 16px}
+.sidebar-nav button{display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;border-radius:8px;font-size:0.9rem;transition:all .3s ease}
+.sidebar-nav button:hover{background:var(--bg-hover)}
+.sidebar-nav button.active{background:#ffffff10}
+
+/* ===== MAIN CONTENT ===== */
+#main{margin-left:var(--sidebar-w);margin-top:56px;min-height:calc(100vh - 56px);padding:24px;transition:margin .3s ease}
+
+/* ===== ZONE MAP ===== */
+#zone-map{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:1200px;margin:0 auto}
+.map-header{grid-column:1/-1;text-align:center;padding:20px 0}
+.map-header h1{font-size:1.8rem;margin-bottom:8px}
+.map-header p{color:var(--text2);font-size:0.95rem}
+.zone-card{background:var(--bg2);border:1px solid #ffffff10;border-radius:16px;padding:24px;cursor:pointer;transition:all .3s ease;position:relative;overflow:hidden}
+.zone-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--zone-color);opacity:0.6;transition:opacity .3s ease}
+.zone-card:hover{transform:translateY(-3px);border-color:#ffffff20}
+.zone-card:hover::before{opacity:1}
+.zone-card.completed{border-color:color-mix(in srgb,var(--zone-color) 40%,transparent)}
+.zone-card.completed::before{opacity:1}
+.zone-card.current{border-color:var(--zone-color);box-shadow:0 0 20px color-mix(in srgb,var(--zone-color) 20%,transparent),0 0 40px color-mix(in srgb,var(--zone-color) 10%,transparent);animation:pulse-glow 2s ease-in-out infinite}
+.zone-card.locked{opacity:0.35;cursor:default;transform:none!important}
+.zone-card .zone-emoji{font-size:2.5rem;margin-bottom:12px}
+.zone-card .zone-name{font-family:var(--font-head);font-size:1.1rem;margin-bottom:4px}
+.zone-card .zone-theme{color:var(--text2);font-size:0.85rem;margin-bottom:12px}
+.zone-card .zone-progress{height:4px;background:#ffffff10;border-radius:2px;overflow:hidden}
+.zone-card .zone-progress-fill{height:100%;border-radius:2px;transition:width .5s ease;background:var(--zone-color)}
+.zone-card .zone-meta{display:flex;justify-content:space-between;margin-top:8px;font-size:0.8rem;color:var(--text2)}
+@keyframes pulse-glow{0%,100%{box-shadow:0 0 20px color-mix(in srgb,var(--zone-color) 20%,transparent)}50%{box-shadow:0 0 30px color-mix(in srgb,var(--zone-color) 35%,transparent),0 0 60px color-mix(in srgb,var(--zone-color) 15%,transparent)}}
+</style>
+<style>
+/* ===== LEVEL VIEW ===== */
+#level-view{max-width:800px;margin:0 auto;display:none}
+.level-header{margin-bottom:24px}
+.level-header .level-num{font-size:0.8rem;color:var(--text2);text-transform:uppercase;letter-spacing:2px}
+.level-header h1{font-size:1.6rem;margin:4px 0 8px}
+.level-header .level-xp{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;background:#FFD70015;color:var(--gold);font-size:0.85rem;font-weight:600}
+.content-card{background:var(--bg2);border:1px solid #ffffff10;border-radius:12px;padding:20px;margin-bottom:16px;transition:all .3s ease}
+.content-card h2{font-size:1.1rem;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.content-card p{line-height:1.7;color:var(--text);font-size:0.95rem}
+.takeaway-box{background:linear-gradient(135deg,#ffffff05,#ffffff02);border-left:3px solid var(--zone-color,var(--z1));padding:16px 20px;border-radius:0 12px 12px 0;margin-bottom:16px}
+.takeaway-box p{font-weight:500;font-size:0.95rem}
+.story-card{border:1px solid #FFD70030;border-radius:12px;padding:16px 20px;margin-bottom:16px;background:#FFD70005;cursor:pointer;transition:all .3s ease}
+.story-card:hover{background:#FFD70010;border-color:#FFD70050}
+.story-card.locked{opacity:0.4;cursor:default;border-color:var(--locked)}
+.story-card .story-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-weight:600}
+.story-card .story-who{font-size:0.8rem;color:var(--text2);margin-bottom:8px}
+.story-card .story-body{display:none;line-height:1.7;font-size:0.95rem}
+.story-card .story-body.open{display:block}
+.story-card .story-lesson{font-style:italic;color:var(--gold);margin-top:8px;font-size:0.9rem}
+
+/* ===== CHALLENGE AREA ===== */
+.challenge-area{background:var(--bg2);border:1px solid #ffffff10;border-radius:12px;padding:24px;margin-bottom:16px}
+.challenge-area h2{font-size:1.1rem;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.challenge-area .question{font-size:1rem;margin-bottom:16px;line-height:1.6}
+.mc-options{display:flex;flex-direction:column;gap:8px}
+.mc-option{padding:12px 16px;border:1px solid #ffffff15;border-radius:10px;cursor:pointer;transition:all .3s ease;display:flex;align-items:center;gap:10px;font-size:0.95rem}
+.mc-option:hover{background:#ffffff08;border-color:#ffffff25}
+.mc-option.selected{border-color:var(--z1);background:#00F0FF10}
+.mc-option.correct{border-color:var(--success);background:#39FF1415;color:var(--success)}
+.mc-option.wrong{border-color:var(--error);background:#FF2D5515;color:var(--error)}
+.mc-option .radio{width:18px;height:18px;border:2px solid #ffffff30;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .3s ease}
+.mc-option.selected .radio{border-color:var(--z1)}
+.mc-option.selected .radio::after{content:'';width:8px;height:8px;background:var(--z1);border-radius:50%}
+.mc-option.correct .radio{border-color:var(--success)}
+.mc-option.correct .radio::after{content:'✓';background:none;color:var(--success);font-size:12px;width:auto;height:auto}
+.mc-option.wrong .radio{border-color:var(--error)}
+.mc-option.wrong .radio::after{content:'✗';background:none;color:var(--error);font-size:12px;width:auto;height:auto}
+
+/* Drag & Drop */
+.dd-container{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.dd-items,.dd-targets{display:flex;flex-direction:column;gap:8px}
+.dd-item{padding:10px 14px;background:var(--bg3);border:1px solid #ffffff15;border-radius:8px;cursor:grab;transition:all .2s ease;font-size:0.9rem;user-select:none}
+.dd-item:active{cursor:grabbing;transform:scale(1.02)}
+.dd-item.dragging{opacity:0.5}
+.dd-item.matched{border-color:var(--success);background:#39FF1410;cursor:default}
+.dd-target{padding:10px 14px;background:#ffffff05;border:2px dashed #ffffff20;border-radius:8px;min-height:42px;transition:all .2s ease;font-size:0.9rem}
+.dd-target.over{border-color:var(--z1);background:#00F0FF08}
+.dd-target.filled{border-style:solid;border-color:var(--success);background:#39FF1408}
+.dd-target.wrong-fill{border-color:var(--error);background:#FF2D5508}
+.dd-label{font-size:0.8rem;color:var(--text2);margin-bottom:4px}
+
+/* Ordering */
+.order-list{display:flex;flex-direction:column;gap:6px}
+.order-item{padding:12px 16px;background:var(--bg3);border:1px solid #ffffff15;border-radius:8px;cursor:grab;display:flex;align-items:center;gap:10px;transition:all .2s ease;font-size:0.9rem;user-select:none}
+.order-item:active{cursor:grabbing}
+.order-item .grip{color:var(--text2);font-size:1.1rem}
+.order-item.correct-pos{border-color:var(--success);background:#39FF1410}
+.order-item.wrong-pos{border-color:var(--error);background:#FF2D5510}
+
+/* Fill in blank */
+.fill-blank-input{background:var(--bg3);border:1px solid #ffffff20;border-radius:8px;padding:10px 14px;color:var(--text);font-family:var(--font-mono);font-size:0.95rem;width:100%;max-width:400px;transition:all .3s ease;outline:none}
+.fill-blank-input:focus{border-color:var(--z1);box-shadow:0 0 10px #00F0FF20}
+.fill-blank-input.correct{border-color:var(--success);box-shadow:0 0 10px #39FF1420}
+.fill-blank-input.wrong{border-color:var(--error);box-shadow:0 0 10px #FF2D5520}
+.fill-group{margin-bottom:12px}
+.fill-group label{display:block;margin-bottom:6px;font-size:0.9rem;color:var(--text2)}
+
+/* True/False */
+.tf-question{padding:16px;background:var(--bg3);border:1px solid #ffffff10;border-radius:10px;margin-bottom:8px;transition:all .3s ease}
+.tf-question .tf-text{margin-bottom:10px;font-size:0.95rem}
+.tf-buttons{display:flex;gap:8px}
+.tf-btn{padding:8px 20px;border-radius:8px;font-weight:600;transition:all .3s ease;font-size:0.9rem}
+.tf-btn.true-btn{border:1px solid var(--success);color:var(--success)}
+.tf-btn.true-btn:hover{background:#39FF1415}
+.tf-btn.false-btn{border:1px solid var(--error);color:var(--error)}
+.tf-btn.false-btn:hover{background:#FF2D5515}
+.tf-btn.chosen-correct{background:var(--success);color:#000}
+.tf-btn.chosen-wrong{background:var(--error);color:#fff}
+.tf-question.answered{opacity:0.7}
+
+/* Checklist */
+.checklist-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg3);border:1px solid #ffffff10;border-radius:8px;margin-bottom:6px;cursor:pointer;transition:all .3s ease;font-size:0.9rem}
+.checklist-item:hover{background:var(--bg-hover)}
+.checklist-item input[type=checkbox]{accent-color:var(--z1);width:18px;height:18px}
+.checklist-item.checked{border-color:var(--success);background:#39FF1408}
+
+/* Creative */
+.creative-textarea{width:100%;min-height:80px;background:var(--bg3);border:1px solid #ffffff20;border-radius:8px;padding:12px;color:var(--text);font-family:var(--font-body);font-size:0.95rem;resize:vertical;outline:none;transition:all .3s ease}
+.creative-textarea:focus{border-color:var(--z1);box-shadow:0 0 10px #00F0FF20}
+
+/* Submit / Nav buttons */
+.challenge-submit{padding:10px 24px;border-radius:10px;font-weight:600;font-size:0.95rem;transition:all .3s ease;margin-top:16px}
+.btn-primary{background:linear-gradient(135deg,var(--zone-color,var(--z1)),color-mix(in srgb,var(--zone-color,var(--z1)) 70%,#fff));color:#000;border:none}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 15px color-mix(in srgb,var(--zone-color,var(--z1)) 40%,transparent)}
+.btn-primary:disabled{opacity:0.4;cursor:default;transform:none;box-shadow:none}
+.btn-outline{border:1px solid #ffffff20;background:#ffffff08}
+.btn-outline:hover{background:#ffffff15}
+.level-nav{display:flex;justify-content:space-between;margin-top:24px;gap:12px}
+.level-nav button{padding:10px 20px;border-radius:10px;font-size:0.9rem;transition:all .3s ease}
+.challenge-result{padding:12px 16px;border-radius:10px;margin-top:12px;font-weight:500;font-size:0.95rem;display:none}
+.challenge-result.success{display:block;background:#39FF1412;border:1px solid #39FF1430;color:var(--success)}
+.challenge-result.fail{display:block;background:#FF2D5512;border:1px solid #FF2D5530;color:var(--error)}
+</style>
+<style>
+/* ===== TROPHY CASE ===== */
+#trophy-view{display:none;max-width:900px;margin:0 auto}
+.trophy-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;margin-top:16px}
+.badge-card{background:var(--bg2);border:1px solid #ffffff10;border-radius:12px;padding:20px;text-align:center;transition:all .3s ease;cursor:default}
+.badge-card:hover{transform:translateY(-2px)}
+.badge-card .badge-icon{font-size:2.5rem;margin-bottom:8px;display:block}
+.badge-card .badge-name{font-family:var(--font-head);font-size:0.75rem;margin-bottom:4px}
+.badge-card .badge-desc{font-size:0.75rem;color:var(--text2)}
+.badge-card.earned{border-color:#FFD70040;box-shadow:0 0 15px #FFD70015}
+.badge-card.earned .badge-icon{filter:none}
+.badge-card.locked{opacity:0.35}
+.badge-card.locked .badge-icon{filter:grayscale(1)}
+
+/* ===== STATS VIEW ===== */
+#stats-view{display:none;max-width:700px;margin:0 auto}
+.stat-card{background:var(--bg2);border:1px solid #ffffff10;border-radius:12px;padding:20px;margin-bottom:12px}
+.stat-card h3{font-size:0.9rem;color:var(--text2);margin-bottom:8px}
+.stat-card .stat-value{font-family:var(--font-head);font-size:1.8rem;color:var(--gold)}
+.stat-bar{height:8px;background:#ffffff10;border-radius:4px;overflow:hidden;margin-top:8px}
+.stat-bar-fill{height:100%;border-radius:4px;transition:width .5s ease}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.reset-btn{margin-top:24px;padding:10px 20px;border:1px solid var(--error);color:var(--error);border-radius:10px;font-size:0.9rem;transition:all .3s ease}
+.reset-btn:hover{background:#FF2D5515}
+
+/* ===== STORIES VIEW ===== */
+#stories-view{display:none;max-width:800px;margin:0 auto}
+.stories-list{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+
+/* ===== GRADUATION ===== */
+#grad-view{display:none;text-align:center;max-width:700px;margin:0 auto;padding:40px 20px}
+#grad-view .grad-badge{font-size:5rem;margin-bottom:16px;display:block;animation:grad-float 3s ease-in-out infinite}
+#grad-view h1{font-size:2rem;margin-bottom:8px;background:linear-gradient(135deg,var(--gold),#fff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+#grad-view p{color:var(--text2);line-height:1.7;margin-bottom:16px}
+.grad-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0}
+.grad-stat{background:var(--bg2);border-radius:12px;padding:16px;border:1px solid #FFD70020}
+.grad-stat .val{font-family:var(--font-head);font-size:1.5rem;color:var(--gold)}
+.grad-stat .lbl{font-size:0.8rem;color:var(--text2);margin-top:4px}
+.grad-links{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px}
+.grad-links a{padding:10px 20px;border:1px solid #FFD70040;border-radius:10px;color:var(--gold);transition:all .3s ease;font-size:0.9rem}
+.grad-links a:hover{background:#FFD70015}
+@keyframes grad-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+/* ===== XP ANIMATION ===== */
+.xp-float{position:fixed;pointer-events:none;font-family:var(--font-head);font-weight:700;color:var(--gold);font-size:1.2rem;text-shadow:0 0 10px #FFD70060;z-index:200;animation:xp-rise 1.5s ease-out forwards}
+@keyframes xp-rise{0%{opacity:1;transform:translateY(0) scale(1)}50%{opacity:1;transform:translateY(-30px) scale(1.2)}100%{opacity:0;transform:translateY(-60px) scale(0.8)}}
+
+/* ===== BADGE CELEBRATION ===== */
+#badge-celebration{display:none;position:fixed;inset:0;background:#000000cc;z-index:300;align-items:center;justify-content:center;flex-direction:column}
+#badge-celebration.show{display:flex}
+#badge-celebration .celeb-badge{font-size:5rem;animation:badge-pop 0.6s ease-out}
+#badge-celebration .celeb-name{font-family:var(--font-head);font-size:1.3rem;margin-top:12px;color:var(--gold)}
+#badge-celebration .celeb-desc{color:var(--text2);margin-top:8px;font-size:0.9rem}
+#badge-celebration .celeb-close{margin-top:20px;padding:8px 24px;border:1px solid #ffffff20;border-radius:8px;font-size:0.9rem;transition:all .3s ease}
+#badge-celebration .celeb-close:hover{background:#ffffff10}
+@keyframes badge-pop{0%{transform:scale(0) rotate(-20deg);opacity:0}60%{transform:scale(1.2) rotate(5deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+
+/* ===== CONFETTI CANVAS ===== */
+#confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:250}
+
+/* ===== MOBILE ===== */
+#mobile-tabs{display:none;position:fixed;bottom:0;left:0;right:0;height:56px;background:var(--bg2);border-top:1px solid #ffffff10;z-index:100;justify-content:space-around;align-items:center}
+#mobile-tabs button{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.65rem;color:var(--text2);padding:4px 8px;transition:all .3s ease}
+#mobile-tabs button.active{color:var(--text)}
+#mobile-tabs button .tab-icon{font-size:1.2rem}
+
+@media(max-width:1024px){
+  #sidebar{transform:translateX(-100%)}
+  #sidebar.open{transform:translateX(0)}
+  #main{margin-left:0}
+  #mobile-menu{display:block}
+}
+@media(max-width:768px){
+  #sidebar{display:none}
+  #mobile-menu{display:none}
+  #mobile-tabs{display:flex}
+  #main{margin-left:0;margin-bottom:56px;padding:16px}
+  .top-stats .stat.hide-mobile{display:none}
+  .dd-container{grid-template-columns:1fr}
+  .trophy-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+  .grad-stats{grid-template-columns:1fr}
+}
+
+/* ===== ARIA LIVE ===== */
+#aria-live{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+</style>
+
+</head>
+<body>
+<!-- ARIA Live Region -->
+<div id="aria-live" aria-live="polite" role="status"></div>
+
+<!-- Top Bar -->
+<header id="topbar">
+  <div class="logo">🎮 <span>OpenClaw Academy</span></div>
+  <div class="top-stats">
+    <div class="stat rank-display hide-mobile" id="top-rank">🐣 Curious Human</div>
+    <div class="stat xp-display" id="top-xp">⭐ 0 XP</div>
+    <div class="stat hide-mobile" id="top-badges">🏆 0/20</div>
+    <div class="stat hide-mobile" id="top-progress">📊 0%</div>
+    <button id="sound-toggle" title="Toggle Sound" aria-label="Toggle sound effects">🔇</button>
+    <button id="mobile-menu" aria-label="Toggle sidebar">☰</button>
+  </div>
+</header>
+
+<!-- Sidebar -->
+<nav id="sidebar" aria-label="Zone navigation">
+  <div class="sidebar-section" id="sidebar-zones"></div>
+  <div class="sidebar-nav">
+    <button onclick="showView('map')" id="nav-map">🗺️ Zone Map</button>
+    <button onclick="showView('stories')" id="nav-stories">📖 Stories</button>
+    <button onclick="showView('trophies')" id="nav-trophies">🏆 Trophy Case</button>
+    <button onclick="showView('stats')" id="nav-stats">📊 Stats</button>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main id="main">
+  <div id="zone-map"></div>
+  <div id="level-view"></div>
+  <div id="trophy-view"></div>
+  <div id="stats-view"></div>
+  <div id="stories-view"></div>
+  <div id="grad-view"></div>
+</main>
+
+<!-- Mobile Tabs -->
+<nav id="mobile-tabs" aria-label="Mobile navigation">
+  <button onclick="showView('map')" id="tab-map"><span class="tab-icon">🗺️</span>Map</button>
+  <button onclick="showView('stories')" id="tab-stories"><span class="tab-icon">📖</span>Stories</button>
+  <button onclick="showView('trophies')" id="tab-trophies"><span class="tab-icon">🏆</span>Badges</button>
+  <button onclick="showView('stats')" id="tab-stats"><span class="tab-icon">📊</span>Stats</button>
+</nav>
+
+<!-- Badge Celebration Overlay -->
+<div id="badge-celebration" role="dialog" aria-label="Badge earned">
+  <div class="celeb-badge" id="celeb-badge-icon"></div>
+  <div class="celeb-name" id="celeb-badge-name"></div>
+  <div class="celeb-desc" id="celeb-badge-desc"></div>
+  <button class="celeb-close" onclick="closeCelebration()">Continue</button>
+</div>
+
+<!-- Confetti Canvas -->
+<canvas id="confetti-canvas"></canvas>
+
+<script>
+// ===== GAME DATA =====
+const ZONES = [
+{
+  id:1, name:"Getting Started", emoji:"🌍", theme:"The Launchpad", color:"#00F0FF", bonusXP:200,
+  badge:{id:"launch-clearance",name:"Launch Clearance",icon:"🚀",desc:"Completed the Getting Started zone"},
+  levels:[
+    {id:"1.1",title:"What is OpenClaw?",emoji:"🤖",xp:100,
+     explanation:"OpenClaw upgrades a chatbot into a full-time digital employee. It has its own computer, can browse the web, manage files, and take real actions — all autonomously. Unlike a chatbot that just answers questions, OpenClaw runs in a continuous loop: it receives tasks, picks tools, reads results, decides what to do next, and keeps going until the job is done.\n\nAs Jay puts it: \"Think of it as going from a chatbot to a full-time employee. It has its own computer, it can take action, browse the web, manage files.\" And it's completely open source, meaning you can inspect, modify, and extend every part of it.",
+     keyTakeaway:"OpenClaw is not a chatbot. It's an autonomous agent framework that acts, learns, and improves.",
+     story:{id:"story-1",title:"I Thought It Was Just Another Tool",who:"Bhanu",
+       content:"Bhanu initially dismissed OpenClaw as \"just another tool\" — until he saw people buying Mac Minis specifically to run it. Once he tried it, he was hooked. It could research the web, read code, and even update its own configuration. That first experience changed everything.",
+       lesson:"Don't judge a tool by its category. Sometimes the \"just another X\" is the one that changes your workflow forever."},
+     challenge:{type:"multiple-choice",question:"What makes OpenClaw different from a regular chatbot?",
+       options:["It can take actions, browse the web, and manage files autonomously","It has a better language model","It's faster at generating text","It only works with OpenAI"],correct:0}},
+    {id:"1.2",title:"Installation",emoji:"📦",xp:100,
+     explanation:"Installing OpenClaw is a one-liner from openclaw.ai. It runs as a background process on your machine. But here's the critical best practice: install it on a separate machine — an old laptop, a Mac Mini, a VPS, anything that isn't your personal computer.\n\nJay's advice: \"Treat it like hiring a new employee. You wouldn't give a new hire your personal laptop. Get them their own machine.\" Create a fresh email account for the agent too. This gives you a clean sandbox where the agent can operate freely without risking your personal data.",
+     keyTakeaway:"Separate machine + separate email = safe sandbox.",
+     story:{id:"story-2",title:"Never Install on Your Personal Computer",who:"Bhanu",
+       content:"Bhanu's top safety tip — never install on your personal computer. Use a separate server, VM, or dedicated machine. Create a fresh email account for the agent. Florian's agent created its own Notion workspace using a dedicated Gmail. Isolation is the first rule of agent safety.",
+       lesson:"Treat your agent like a new hire: give it its own workspace, its own credentials, its own machine."},
+     challenge:{type:"multiple-choice",question:"What's the recommended best practice for installing OpenClaw?",
+       options:["Install on your personal laptop","Install on a separate machine with a dedicated email account","Install on your phone","Install on a shared family computer"],correct:1}},
+    {id:"1.3",title:"API Keys vs OAuth",emoji:"🔑",xp:100,
+     explanation:"There are two ways to connect OpenClaw to AI models. API keys work like a taxi meter — you pay per token, and the meter never stops. Heavy usage can get expensive fast. OAuth works like a monthly bus pass — flat fee, ride all you want.\n\nFor beginners, OAuth is the recommended path. It gives you predictable costs while you're learning. Power users who need specific models or fine-grained control can switch to API keys later. Bhanu spent roughly $600-800 total using a combination of both approaches.",
+     keyTakeaway:"Start with OAuth for predictable costs. API keys for power users who need specific models.",
+     story:{id:"story-3",title:"$600-800 and Worth Every Penny",who:"Bhanu",
+       content:"Bhanu spent approximately $600-800 total using a combination of API keys and Claude subscriptions, split with his brother. He uses Opus for everything because quality compounds across agents. When one agent communicates with another, lower quality in means lower quality out across the whole network.",
+       lesson:"Invest in quality models — the cost compounds positively across your entire agent network."},
+     challenge:{type:"drag-match",question:"Match each payment model to its description:",
+       pairs:[
+         {item:"API Key",target:"Pay per token, like a taxi meter"},
+         {item:"OAuth",target:"Flat monthly fee, like a bus pass"},
+         {item:"API Key",target:"Can get expensive with heavy usage"},
+         {item:"OAuth",target:"Recommended for beginners"}
+       ]}},
+    {id:"1.4",title:"OAuth Provider Status",emoji:"🏢",xp:100,
+     explanation:"Not all AI providers treat OAuth agent usage the same way. OpenAI is green light — they literally hired the creator of OpenClaw. Anthropic is yellow — no official word on their stance. Google is red — people have reported account bans.\n\nJay's traffic light system makes it simple: 🟢 OpenAI (safe), 🟡 Anthropic (gray area), 🔴 Google (documented bans). For beginners, OpenAI OAuth is the safest starting point. Bhanu uses Opus (Anthropic) despite the gray area because agent-to-agent communication quality matters more to him.",
+     keyTakeaway:"Know the traffic light: 🟢 OpenAI, 🟡 Anthropic, 🔴 Google.",
+     story:null,
+     challenge:{type:"drag-match",question:"Drag each provider to the correct traffic light status:",
+       pairs:[
+         {item:"OpenAI",target:"🟢 Green — Safe to use"},
+         {item:"Anthropic",target:"🟡 Yellow — Gray area"},
+         {item:"Google",target:"🔴 Red — Documented bans"}
+       ]}}
+  ]
+},
+{
+  id:2, name:"The Brain", emoji:"🧠", theme:"Command Center", color:"#BF00FF", bonusXP:300,
+  badge:{id:"neural-link",name:"Neural Link Established",icon:"🧠",desc:"Mastered the Brain — agentic loop, gateway, channels"},
+  levels:[
+    {id:"2.1",title:"The Agentic Loop",emoji:"🔄",xp:150,
+     explanation:"This is THE core concept of OpenClaw — and arguably all AI agents. A chatbot is one turn: you ask, it answers, done. An agent is a loop. It gets a task, picks a tool, reads the result, decides what to do next, and keeps going until the job is done.\n\nJay explains it perfectly: \"Like fixing a bug: read the file, find the error, edit the code, run the test, and if it fails, try again.\" The loop is what transforms a language model from a question-answering machine into an autonomous worker. Everything else in OpenClaw — memory, tools, skills — builds on top of this fundamental loop.",
+     keyTakeaway:"The loop is what makes an agent an agent. Task → Tool → Result → Decide → Repeat.",
+     story:{id:"story-4",title:"It Downloaded a Transcription Library on Its Own",who:"Bhanu",
+       content:"When Bhanu's agent encountered voice messages it couldn't process, it didn't stop. It went online, downloaded a transcription library, converted audio to text, generated a response, converted it back to audio, and sent a voice clip. No human intervention — the loop in action.",
+       lesson:"The agentic loop means the agent doesn't give up at the first obstacle. It adapts, finds tools, and keeps going."},
+     challenge:{type:"ordering",question:"Put the agentic loop steps in the correct order:",
+       items:["Receive task","Pick a tool","Read the result","Decide what to do next","Repeat until done"],
+       correctOrder:[0,1,2,3,4]}},
+    {id:"2.2",title:"The Gateway",emoji:"🚪",xp:150,
+     explanation:"The gateway is the always-on engine — think of it as a receptionist at a building. It's always there, always running. Messages come in from different channels (WhatsApp, Telegram, etc.), and the gateway routes them to the right agent.\n\nIt includes a web interface called the Control UI where you can manage your agents, view conversations, and configure settings. A single gateway can host many independent agents — Bhanu runs his entire agent army through one gateway. No need for one server per agent.",
+     keyTakeaway:"Gateway = always-on brain. One gateway, many agents, many channels.",
+     story:{id:"story-5",title:"One Gateway, an Entire Agent Army",who:"Bhanu",
+       content:"A single OpenClaw gateway can host many independent agents. Bhanu runs his entire agent army — Jarvis, Brute, research agents, developer agents — through one gateway. No need for one server per agent. It's like one building with many offices.",
+       lesson:"Scale horizontally through agents, not servers. One gateway is all you need."},
+     challenge:{type:"multiple-choice",question:"What does the gateway do?",
+       options:["It's the AI model itself","It routes messages from channels to agents and serves the Control UI","It stores the agent's memory","It's the agent's personality file"],correct:1}},
+    {id:"2.3",title:"Channels",emoji:"📡",xp:150,
+     explanation:"Channels are like phone lines plugged into a switchboard. Your agent has one brain but many ears. WhatsApp, Telegram, Discord, Slack — set it up once and just message it like a workmate.\n\nThe beauty is simplicity: configure a channel once, and from then on you just send messages naturally. Bhanu's lead agent Jarvis lives on Telegram. He messages Jarvis from his phone, gives instructions in natural language, and Jarvis delegates to specialist agents. The entire Mission Control dashboard was built via Telegram chat.",
+     keyTakeaway:"Channels let you talk to your agent wherever you already are.",
+     story:{id:"story-6",title:"The Entire Dashboard Built via Telegram",who:"Bhanu",
+       content:"Bhanu's lead agent Jarvis lives on Telegram. He messages Jarvis from his phone, gives instructions in natural language, and Jarvis delegates to specialist agents. The entire Mission Control dashboard was built via Telegram chat — no IDE, no code editor, just conversation.",
+       lesson:"The best interface is the one you already use. Meet your agent where you are."},
+     challenge:{type:"drag-match",question:"Drag channel icons onto the gateway. Bonus: Which channel did Bhanu use to build an entire dashboard?",
+       pairs:[
+         {item:"WhatsApp",target:"Messaging Channel"},
+         {item:"Telegram",target:"Bhanu's primary channel (built dashboard here)"},
+         {item:"Discord",target:"Community Channel"},
+         {item:"Slack",target:"Workspace Channel"}
+       ]}}
+  ]
+},
+{
+  id:3, name:"Agent DNA", emoji:"🧬", theme:"The Identity Lab", color:"#39FF14", bonusXP:400,
+  badge:{id:"dna-architect",name:"DNA Architect",icon:"🧬",desc:"Built a complete agent identity from scratch"},
+  levels:[
+    {id:"3.1",title:"Workspace",emoji:"🏠",xp:125,
+     explanation:"The workspace is the agent's home base — a folder on the machine that contains everything the agent needs: instructions, memory, configuration. The default path is ~/.openclaw/agents/.\n\nHere's the beautiful part: it's all plain English markdown files, not code. You don't need to be a programmer to configure your agent. As Jay says: \"The workspace is the agent's home. It's just a folder with markdown files — plain English, not code. That's where its personality, rules, memory, and tools all live.\"",
+     keyTakeaway:"Workspace = a folder of markdown files. Plain English. No coding required.",
+     story:{id:"story-7",title:"Starting Over Would Be Painful",who:"Bhanu",
+       content:"Bhanu's agent has tuned itself so deeply to his context that starting over would be painful. The workspace accumulates knowledge over time — it becomes the agent's institutional memory. Every interaction, every decision, every learned preference lives there.",
+       lesson:"Your agent's workspace is a living document. The longer you use it, the more valuable it becomes."},
+     challenge:{type:"fill-blank",question:"Fill in the blanks:",
+       blanks:[
+         {prompt:"The default workspace path is: ~/.openclaw/______/",answer:["agents"]},
+         {prompt:"Workspace files are written in plain ______, not code.",answer:["english","markdown"]}
+       ]}},
+    {id:"3.2",title:"SOUL.md",emoji:"👻",xp:125,
+     explanation:"SOUL.md is the agent's personality file. Want it formal and professional? Write that. Want it blunt and sarcastic? Write that. It's all plain English, and the agent even refines its own personality over time.\n\nThere's also IDENTITY.md for the agent's name, vibe, and emoji. Together, these files shape how the agent communicates. Bhanu gave his agent a simple instruction: \"Be proactive. Don't keep asking for permission.\" From that point on, it started solving problems autonomously — personality shapes behavior.",
+     keyTakeaway:"SOUL.md = personality. IDENTITY.md = name and vibe. Plain English, agent-refinable.",
+     story:{id:"story-8",title:"Be Proactive. Don't Keep Asking Permission.",who:"Bhanu",
+       content:"Bhanu gave his agent a simple instruction: \"Be proactive. Don't keep asking for permission.\" From that point on, it started solving problems autonomously — no more \"Should I do X?\" messages. Personality shapes behavior. The words you put in SOUL.md directly determine how your agent acts.",
+       lesson:"Your agent's personality isn't cosmetic — it fundamentally changes how it operates."},
+     challenge:{type:"creative",question:"Write a 2-sentence personality for your agent. What kind of assistant would you want?",
+       placeholder:"Example: You are direct and efficient. No fluff, no filler — just get it done."}},
+    {id:"3.3",title:"AGENTS.md",emoji:"📋",xp:125,
+     explanation:"AGENTS.md is the most important file in the workspace. It's the operating manual — rules, priorities, boundaries. \"Never publish without my approval.\" \"Always run tests before committing.\" You can even tell it to improve itself daily.\n\nBhanu's Jarvis has strict rules: read-only access to the codebase first, write access limited to feature branches (never main), so Bhanu can review PRs. For low-stakes projects, full access. The key principle: match autonomy to risk.",
+     keyTakeaway:"AGENTS.md = the rulebook. Most important file in the workspace.",
+     story:{id:"story-9",title:"Read-Only First, Then Feature Branches",who:"Bhanu",
+       content:"Bhanu's Jarvis has strict rules: read-only access to the codebase first, write access limited to feature branches (never main), so Bhanu can review PRs. For low-stakes projects, full access. Match autonomy to risk — that's the principle behind good AGENTS.md rules.",
+       lesson:"Graduated trust: start restrictive, expand access as confidence grows."},
+     challenge:{type:"checklist",question:"Select the GOOD rules for an AGENTS.md file:",
+       items:[
+         {text:"Never publish without approval",good:true},
+         {text:"Do whatever you want",good:false},
+         {text:"Always run tests before committing",good:true},
+         {text:"Ignore security warnings",good:false},
+         {text:"Improve yourself daily",good:true}
+       ]}},
+    {id:"3.4",title:"USER.md",emoji:"👤",xp:125,
+     explanation:"USER.md tells the agent about you — your name, timezone, what you're working on, your preferences. The more context you give, the better the agent serves you.\n\nPro tip from Jay: if you use voice transcription, mention that in USER.md. The agent will understand your messy speech-to-text better. Bhanu's agents know his business context deeply — SiteGPT's metrics, his goals, his schedule. They don't generate generic advice; they give tailored, data-driven action items.",
+     keyTakeaway:"USER.md = your profile. The more context you give, the better the agent serves you.",
+     story:{id:"story-10",title:"It Knows My Business Better Than I Do",who:"Bhanu",
+       content:"Bhanu's agents know his business context deeply — SiteGPT's metrics, his goals, his schedule. They don't generate generic advice; they give tailored, data-driven action items because USER.md gives them context. The agent became a true business partner, not just a tool.",
+       lesson:"Context is everything. A well-written USER.md transforms generic AI into a personalized advisor."},
+     challenge:{type:"creative",question:"Fill out a mini USER.md — your name, timezone, current project, and one preference:",
+       placeholder:"Name: ...\nTimezone: ...\nProject: ...\nPreference: ..."}},
+    {id:"3.5",title:"TOOLS.md",emoji:"🛠️",xp:125,
+     explanation:"TOOLS.md is like sticky notes on the agent's monitor. Practical, quick-reference stuff: \"Use this TTS provider.\" \"Here's how to connect to Obsidian.\" \"This is the known fix for that error.\"\n\nIt's not a personality file or a rulebook — it's a cheat sheet. When the agent needs to use a specific tool or work around a known issue, TOOLS.md is where it looks. Over time, the agent adds its own notes here as it discovers new tools and workarounds.",
+     keyTakeaway:"TOOLS.md = practical cheat sheet. Quick-reference notes about tools and workarounds.",
+     story:null,
+     challenge:{type:"multiple-choice",question:"What's the best analogy for TOOLS.md?",
+       options:["A diary","Sticky notes on the agent's monitor","A to-do list","A calendar"],correct:1}}
+  ]
+},
+{
+  id:4, name:"Memory & Awareness", emoji:"💾", theme:"The Vault", color:"#FFD700", bonusXP:350,
+  badge:{id:"memory-keeper",name:"Memory Keeper",icon:"💾",desc:"Understood memory, heartbeat, and cron systems"},
+  levels:[
+    {id:"4.1",title:"Memory System",emoji:"🧠",xp:150,
+     explanation:"Memory in OpenClaw is beautifully simple: it's markdown files. There are two types. Daily notes are like a diary — date-named logs of what happened each day. MEMORY.md is the long-term brain — curated, important stuff that persists.\n\nThe agent auto-saves before its context overflows, preserving key information. The more you use it, the smarter it gets. Bhanu's agent remembers commitments he's forgotten — \"You said you'd follow up with this person seven days ago.\" It scanned 100K emails and remembered dropped conversations.",
+     keyTakeaway:"Two memory types: daily diary + long-term brain. Auto-saves. Gets smarter over time.",
+     story:{id:"story-11",title:"100K Emails Auto-Analyzed",who:"Bhanu",
+       content:"Bhanu's agent remembers commitments he's forgotten. It tracks follow-ups and holds him accountable. \"You said you'd follow up with this person seven days ago\" — that's memory in action. It scanned 100K emails and remembered dropped conversations that Bhanu had completely forgotten about.",
+       lesson:"An agent with good memory becomes your accountability partner, not just your assistant."},
+     challenge:{type:"drag-match",question:"Match each memory type to its description:",
+       pairs:[
+         {item:"Daily Notes",target:"Date-named logs, like a diary"},
+         {item:"MEMORY.md",target:"Long-term curated brain"},
+         {item:"Daily Notes",target:"What happened today"},
+         {item:"MEMORY.md",target:"Important stuff to remember forever"}
+       ]}},
+    {id:"4.2",title:"Heartbeat",emoji:"💓",xp:150,
+     explanation:"Every 30 minutes, the gateway pokes the agent awake. The agent reads its HEARTBEAT.md checklist and decides: \"Do I need to do anything right now?\" This is the heartbeat — a periodic pulse check.\n\nStart with an empty checklist and add items carefully — each heartbeat costs tokens. Bhanu's retention agent Brute monitors customer patterns continuously. If someone's query volume drops 50%, they get flagged. That kind of continuous monitoring is heartbeat-powered awareness.",
+     keyTakeaway:"Heartbeat = periodic wake-up check. Every 30 min. Keep the checklist lean.",
+     story:{id:"story-12",title:"Brute: The Retention Specialist",who:"Bhanu",
+       content:"Bhanu's retention agent Brute monitors customer patterns continuously — if someone's query volume drops 50%, they get flagged. Zero queries for 7 days? More risk points. That kind of continuous monitoring is heartbeat-powered awareness, running 24/7 without human intervention.",
+       lesson:"Heartbeats turn your agent from reactive to proactive — it watches while you sleep."},
+     challenge:{type:"multiple-choice",question:"How often does the heartbeat check fire by default?",
+       options:["Every 5 minutes","Every 30 minutes","Every hour","Once a day"],correct:1}},
+    {id:"4.3",title:"Cron Jobs",emoji:"⏰",xp:150,
+     explanation:"Cron jobs are scheduled tasks at exact times. \"Every morning at 7am, give me a briefing.\" \"Every Sunday, run a security audit.\" While heartbeat is the agent checking in periodically, cron is the agent's calendar — precise, scheduled automation.\n\nBhanu starts every morning by asking Jarvis what he should do that day. That daily briefing is a cron job — the agent prepares a prioritized task list overnight and delivers it on schedule.",
+     keyTakeaway:"Cron = calendar. Heartbeat = pulse check. Different tools for different rhythms.",
+     story:{id:"story-13",title:"What Should I Do Today, Jarvis?",who:"Bhanu",
+       content:"Bhanu starts every morning by asking Jarvis what he should do that day. That daily briefing is a cron job — the agent prepares a prioritized task list overnight and delivers it on schedule. It's like having a chief of staff who never sleeps.",
+       lesson:"Automate your daily briefing. Let the agent prepare while you sleep."},
+     challenge:{type:"drag-match",question:"Match each scenario to the right tool:",
+       pairs:[
+         {item:"Check if anything needs attention periodically",target:"Heartbeat"},
+         {item:"Send a daily briefing at exactly 7am",target:"Cron Job"},
+         {item:"Monitor customer activity patterns",target:"Heartbeat"},
+         {item:"Run a weekly security audit every Sunday",target:"Cron Job"}
+       ]}}
+  ]
+},
+{
+  id:5, name:"Intelligence", emoji:"🔮", theme:"The Engine Room", color:"#FF1493", bonusXP:350,
+  badge:{id:"engine-master",name:"Engine Master",icon:"⚙️",desc:"Grasped context windows, cost, and model switching"},
+  levels:[
+    {id:"5.1",title:"Context Window",emoji:"📏",xp:150,
+     explanation:"The context window is how much the agent can hold in its head at once. Opus 4.6 can hold about a million tokens — that's roughly the length of the Bible. When it gets full, the context engine compresses older stuff, keeping the important bits.\n\nBut bigger isn't always better. When Bhanu was using one agent for everything — personal life, business, coding, marketing — the context got muddled and the agent forgot things. That's context window overflow in practice. Solution: specialist agents with focused contexts.",
+     keyTakeaway:"Context window = working memory. Bigger is better, but focused is smarter.",
+     story:{id:"story-14",title:"Context Got Muddled — Time for Specialists",who:"Bhanu",
+       content:"When Bhanu was using one agent for everything — personal life, business, coding, marketing — the context got muddled and the agent forgot things. That's context window overflow in practice. The solution was specialist agents, each with a focused context that stays clean and relevant.",
+       lesson:"Don't overload one agent. Specialize to keep context clean and performance high."},
+     challenge:{type:"multiple-choice",question:"Opus 4.6 has ~1M tokens. That's roughly the length of:",
+       options:["A short story","A novel","The Bible","A tweet"],correct:2}},
+    {id:"5.2",title:"Context Engine & Cost",emoji:"⚙️",xp:150,
+     explanation:"Here's the thing nobody tells you: every message, all your markdown files get re-injected into the context. If your files are 10K tokens, that's 10K tokens burned on every single message, automatically. That's a major cost driver.\n\nThis is why OAuth is a lifesaver — flat fee, no meter running. With API keys, those 10K tokens per message add up fast. Keep your files lean, use OAuth when possible, and be mindful that every line in your configuration files has a recurring cost.",
+     keyTakeaway:"Every markdown file = recurring cost per message. Keep files lean. Use OAuth.",
+     story:null,
+     challenge:{type:"fill-blank",question:"If your markdown files total 10K tokens and you send 100 messages, how many tokens are consumed JUST by file re-injection?",
+       blanks:[{prompt:"Total tokens consumed by re-injection:",answer:["1000000","1,000,000","1m","1 million"]}]}},
+    {id:"5.3",title:"Model Agnostic",emoji:"🔀",xp:150,
+     explanation:"OpenClaw is like a cockpit where you can swap engines mid-flight. Claude for deep thinking, GPT for speed, local models via Ollama for privacy. You're never locked to one provider.\n\nBhanu initially assigned different LLMs to different agents but switched to Opus everywhere because agent-to-agent communication quality matters. The framework lets you experiment — that flexibility is the point. Match the model to the task, and switch whenever you want.",
+     keyTakeaway:"Swap models freely. Match the model to the task. No vendor lock-in.",
+     story:{id:"story-15",title:"Opus Everywhere — Quality Compounds",who:"Bhanu",
+       content:"Bhanu initially assigned different LLMs to different agents but switched to Opus everywhere because agent-to-agent communication quality matters. When one agent talks to another, lower quality in means lower quality out. The framework lets you experiment — that flexibility is the point.",
+       lesson:"Quality compounds in multi-agent systems. The weakest model is your bottleneck."},
+     challenge:{type:"drag-match",question:"Match each model to its primary strength:",
+       pairs:[
+         {item:"Claude Opus",target:"Deep thinking, highest quality"},
+         {item:"GPT-4",target:"Fast, versatile"},
+         {item:"Ollama (local)",target:"Privacy, no API costs"},
+         {item:"Nova Lite",target:"Cheapest on Bedrock"}
+       ]}}
+  ]
+},
+{
+  id:6, name:"Superpowers", emoji:"⚡", theme:"The Armory", color:"#FF6B00", bonusXP:400,
+  badge:{id:"fully-armed",name:"Fully Armed",icon:"⚔️",desc:"Learned skills, MCP, plugins, and nodes"},
+  levels:[
+    {id:"6.1",title:"Skills",emoji:"📜",xp:150,
+     explanation:"Skills are playbooks — step-by-step instructions for specific tasks. \"Here's how to write a blog post.\" \"Here's how to do a code review.\" Each agent gets its own skill set, tailored to its role.\n\nClawHub.ai has community-contributed skills, but Jay recommends building your own — you know your workflow best. Bhanu's retention agent Brute has a churn risk scoring framework as a skill: query volume drops 50%? 25 risk points. Zero queries for 7 days? 30 more points. Skills encode domain expertise into repeatable playbooks.",
+     keyTakeaway:"Skills = playbooks. Teach once, execute forever. Build your own for best results.",
+     story:null,
+     challenge:{type:"multiple-choice",question:"What's the safest approach to skills?",
+       options:["Download everything from ClawHub.ai","Build your own skills for your specific workflow","Use no skills at all","Copy skills from random GitHub repos"],correct:1}},
+    {id:"6.2",title:"MCP Servers",emoji:"🔌",xp:150,
+     explanation:"MCP (Model Context Protocol) servers are universal power adapters. Want your agent to check Google Calendar? GitHub? Figma? MCP connects them. The agent reaches into external tools right from the conversation.\n\nBhanu gave his agent access to ChartMogul via integration, and it discovered that SiteGPT's problem wasn't retention — it was activation. Users signed up but never fully tried the product. External tool access led to real business insights that changed his entire strategy.",
+     keyTakeaway:"MCP = universal adapters. Connect your agent to any external tool or service.",
+     story:{id:"story-16",title:"Activation vs Retention: ChartMogul Discovery",who:"Bhanu",
+       content:"Bhanu gave his agent access to ChartMogul via integration, and it discovered that SiteGPT's problem wasn't retention — it was activation. Users signed up but never fully tried the product. External tool access = real business insights that humans might miss.",
+       lesson:"Give your agent access to your data tools. It might find insights you've been overlooking."},
+     challenge:{type:"checklist",question:"Select all the services that can be connected via MCP:",
+       items:[
+         {text:"GitHub",good:true},
+         {text:"Google Calendar",good:true},
+         {text:"Figma",good:true},
+         {text:"ChartMogul",good:true}
+       ]}},
+    {id:"6.3",title:"Plugins",emoji:"🧩",xp:150,
+     explanation:"Plugins are code-level extensions — TypeScript or JavaScript. They run inside the gateway itself. You can add new channels, register custom tools, even swap out the context engine.\n\nFun fact: every channel — Telegram, WhatsApp, Discord — is actually a plugin. The entire Mission Control dashboard integration is plugin-level architecture. Plugins enable the deep customization that makes multi-agent systems possible.",
+     keyTakeaway:"Plugins = deep extensions. Code-level power. Channels themselves are plugins.",
+     story:{id:"story-17",title:"It Created Its Own Notion Account",who:"Florian",
+       content:"Florian's agent created its own Notion workspace using a dedicated Gmail account. The plugin architecture made this possible — the agent could interact with external services at a deep level, creating accounts and configuring tools autonomously.",
+       lesson:"Plugins unlock autonomous tool creation. Your agent can set up its own workspace."},
+     challenge:{type:"true-false",question:"Answer True or False for each statement:",
+       statements:[
+         {text:"Plugins are written in Python",answer:false},
+         {text:"Every channel is actually a plugin",answer:true},
+         {text:"Plugins run inside the gateway",answer:true},
+         {text:"Plugins are the same as skills",answer:false},
+         {text:"Plugins can swap the context engine",answer:true}
+       ]}},
+    {id:"6.4",title:"Nodes",emoji:"📱",xp:150,
+     explanation:"Nodes let you connect to other devices — smart glasses, iPads, anything. It's still early, but VisionClaw is an experiment where the agent can see through a camera. Push notifications to any device.\n\nFlorian fantasized about putting OpenClaw intelligence into a robot — Mac Mini with arms, legs, and a webcam. Telegram it to check if you closed a window. Nodes are the bridge between digital agents and the physical world. The future is wild.",
+     keyTakeaway:"Nodes = device connections. Early stage but points to physical-world AI.",
+     story:null,
+     challenge:{type:"multiple-choice",question:"What do Nodes enable?",
+       options:["Faster AI processing","Connecting to physical devices like smart glasses and iPads","More memory storage","Better security"],correct:1}}
+  ]
+},
+{
+  id:7, name:"Operations", emoji:"🛡️", theme:"Mission Control", color:"#FF2D55", bonusXP:500,
+  badge:{id:"mission-commander",name:"Mission Commander",icon:"🎖️",desc:"Mastered security, multi-agent, and operations"},
+  levels:[
+    {id:"7.1",title:"Permissions & Security",emoji:"🔒",xp:175,
+     explanation:"Security is no joke — this thing has access to your computer. Use openclaw.json to allow or deny specific tools. Set up a security audit cron job. Lock it down like you'd lock down a new employee's access.\n\nBhanu ran `openclaw doctor` which audits your setup and provides hardening suggestions. He fed Jarvis a security-focused tweet and the official docs, asked it to evaluate and improve the setup. Jarvis recommended closing ports and adding token auth — then implemented it all.",
+     keyTakeaway:"Security first. openclaw.json controls permissions. Run `openclaw doctor`. Gradual trust.",
+     story:null,
+     challenge:{type:"checklist",question:"You're auditing an OpenClaw setup. Select all the security ISSUES you find:",
+       items:[
+         {text:"All tools are allowed (should restrict)",good:true},
+         {text:"No security audit cron job configured",good:true},
+         {text:"Gateway token is set",good:false},
+         {text:"Agent has write access to main branch",good:true}
+       ]}},
+    {id:"7.2",title:"Multi-Agent Systems",emoji:"👥",xp:175,
+     explanation:"You can run multiple agents in one gateway. Each gets its own workspace, memory, and personality. Think of it as one building with different offices — a personal assistant in one, a developer in another, a sales agent in a third.\n\nBhanu's context got cluttered using one agent for everything. Solution: specialist agents. Keyword research agent, email marketing agent, retention agent (Brute), developer agent. They communicate through Mission Control dashboard — a shared knowledge base.",
+     keyTakeaway:"One gateway, many agents. Each specialized. Shared infrastructure, separate brains.",
+     story:null,
+     challenge:{type:"drag-match",question:"Drag each agent type into the gateway building:",
+       pairs:[
+         {item:"Personal Assistant",target:"Handles scheduling and daily tasks"},
+         {item:"Developer Agent",target:"Writes and reviews code"},
+         {item:"Sales Agent",target:"Manages leads and outreach"},
+         {item:"Research Agent",target:"Gathers and analyzes information"}
+       ]}},
+    {id:"7.3",title:"Sub-Agents & Delegation",emoji:"🤝",xp:175,
+     explanation:"Sub-agents are like interns. The lead agent gets a big task, creates a sub-agent, hands it off, and stays available for new work. No bottlenecks.\n\nJarvis must always remain responsive. When a long-running task comes in, Jarvis creates a sub-agent, delegates, and stays available. The dashboard shows a group chat where agents collaborate — research agent shares findings, developer responds with a PR, content agent proposes pages.",
+     keyTakeaway:"Sub-agents prevent bottlenecks. Lead agent delegates and stays responsive.",
+     story:{id:"story-18",title:"The Agent Told Me: The Real Bottleneck Is You",who:"Bhanu",
+       content:"Bhanu's agent army works 24/7, but the real bottleneck became Bhanu himself — reviewing PRs, approving decisions, providing direction. The agent literally told him: the bottleneck is you. That's when delegation and sub-agents became critical.",
+       lesson:"As your agents scale, YOU become the bottleneck. Delegate more, review less."},
+     challenge:{type:"multiple-choice",question:"Jarvis receives a task that will take 2 hours. What should Jarvis do?",
+       options:["Work on it and ignore new messages","Create a sub-agent, delegate the task, stay available","Tell the user to wait","Cancel the task"],correct:1}},
+    {id:"7.4",title:"Mission Control",emoji:"🎛️",xp:175,
+     explanation:"Bhanu had zero visibility into what agents were discussing. So he built Mission Control HQ — a central dashboard where all agent conversations happen. The entire dashboard was built without him writing a single line of code. He described what he wanted via Telegram, and the agent built it all.\n\nNow a $10K MRR product, Mission Control provides the operational layer that ties multi-agent systems together. Visibility is critical — without it, you're flying blind.",
+     keyTakeaway:"Visibility is critical. A dashboard turns agent chaos into orchestrated teamwork.",
+     story:{id:"story-19",title:"From Assistant to Marketing Machine to Co-Founder",who:"Bhanu",
+       content:"Bhanu's journey with OpenClaw went from simple assistant to marketing machine to what feels like a co-founder. The agent handles research, development, customer retention, and even product strategy. Mission Control HQ — now a $10K MRR product — was built entirely by agents.",
+       lesson:"Start small, but think big. Your agent can grow from assistant to co-founder."},
+     challenge:{type:"multiple-choice",question:"Why did Bhanu build Mission Control HQ?",
+       options:["To make money","Because he had zero visibility into what agents were discussing","Because OpenClaw told him to","To replace Telegram"],correct:1}}
+  ]
+},
+{
+  id:8, name:"Boss Level", emoji:"🏰", theme:"Deploy on AWS", color:"#0080FF", bonusXP:600,
+  badge:{id:"cloud-conqueror",name:"Cloud Conqueror",icon:"☁️",desc:"Deployed OpenClaw on AWS"},
+  levels:[
+    {id:"8.1",title:"AWS Deployment Options",emoji:"☁️",xp:200,
+     explanation:"Three paths to deploy OpenClaw on AWS. Lightsail Blueprint: ~5 minutes, ~$29-32/month, easiest — perfect for first-timers. CloudFormation + Bedrock: ~8 minutes, ~$23-43/month, one command — the sweet spot for AWS users. Manual EC2: ~30-45 minutes, ~$15-30/month, full control — for custom setups.\n\nEach path has trade-offs between ease, cost, and control. CloudFormation + Bedrock is generally the recommended path — it gives you production-ready infrastructure with a single command.",
+     keyTakeaway:"Three paths, pick your adventure. CloudFormation + Bedrock is the sweet spot.",
+     story:null,
+     challenge:{type:"drag-match",question:"Match each deployment path to its best use case:",
+       pairs:[
+         {item:"Lightsail Blueprint",target:"First-timers, easiest setup (~5 min)"},
+         {item:"CloudFormation + Bedrock",target:"AWS users, one-command deploy (~8 min)"},
+         {item:"Manual EC2",target:"Custom setups, full control (~30-45 min)"}
+       ]}},
+    {id:"8.2",title:"Prerequisites & Setup",emoji:"🔧",xp:200,
+     explanation:"Four prerequisites that can each be a gotcha: AWS CLI v2 installed and configured, EC2 key pair created, Bedrock model access enabled in the console, and SSM Session Manager Plugin installed.\n\nThe sneakiest one is Bedrock model access — the stack deploys fine without it, but the agent can't respond because it has no model to talk to. Easy to forget, hard to debug. Check all four before you deploy.",
+     keyTakeaway:"Four prerequisites. Miss one and the deploy works but the agent doesn't.",
+     story:null,
+     challenge:{type:"checklist",question:"Check off all 4 prerequisites in order. Which one is easiest to forget?",
+       items:[
+         {text:"AWS CLI v2 installed and configured",good:true},
+         {text:"EC2 key pair created",good:true},
+         {text:"Bedrock model access enabled",good:true},
+         {text:"SSM Session Manager Plugin installed",good:true}
+       ]}},
+    {id:"8.3",title:"CloudFormation Stack",emoji:"🏗️",xp:200,
+     explanation:"The CloudFormation template creates everything: VPC for networking, EC2 Graviton instance for compute, IAM role with Bedrock permissions, encrypted storage, Docker for sandboxed execution, systemd service for auto-restart, and SSM-only access.\n\nZero open ports — all access goes through SSM (Systems Manager). The gateway token is stored encrypted in SSM Parameter Store. One template, complete infrastructure, production-ready from day one.",
+     keyTakeaway:"One template, complete infrastructure. Zero open ports. Production-ready.",
+     story:null,
+     challenge:{type:"drag-match",question:"Match each component to what it provides in the stack:",
+       pairs:[
+         {item:"VPC",target:"Network isolation and security"},
+         {item:"EC2 Graviton",target:"Compute instance for the agent"},
+         {item:"IAM Role",target:"Bedrock permissions for AI models"},
+         {item:"SSM",target:"Secure access without open ports"},
+         {item:"Docker",target:"Sandboxed code execution"}
+       ]}},
+    {id:"8.4",title:"Deploy & Connect",emoji:"🚀",xp:300,
+     explanation:"The boss fight — the actual deployment sequence. Run the deploy command with all parameters. Poll for CREATE_COMPLETE (~8 minutes). Get the instance ID from stack resources. Start SSM port forwarding tunnel. Retrieve the gateway token from Parameter Store. Open the Control UI in your browser.\n\nFrom zero to working agent in about 10 minutes. One command to deploy, one tunnel to connect, one URL to chat. Troubleshoot common errors: OOM (need bigger instance), token missing (check Parameter Store), model not enabled (check Bedrock console).",
+     keyTakeaway:"One command to deploy. One tunnel to connect. One URL to chat. ~10 minutes total.",
+     story:{id:"story-20",title:"Florian's First 24 Hours — Crying and Smiling",who:"Florian",
+       content:"Florian's first 24 hours with OpenClaw were an emotional rollercoaster — crying and smiling. The agent created its own Notion workspace, started organizing his life, and began taking actions he never expected. The deployment was just the beginning of a transformative experience.",
+       lesson:"The deployment is just the beginning. The real magic starts when you give your agent room to work."},
+     challenge:{type:"ordering",question:"🐉 BOSS FIGHT! Put the deployment steps in the correct order:",
+       items:["Run aws cloudformation deploy command","Wait for CREATE_COMPLETE","Get instance ID from stack resources","Start SSM port forwarding session","Retrieve gateway token from Parameter Store","Open Control UI in browser"],
+       correctOrder:[0,1,2,3,4,5]}},
+    {id:"8.5",title:"Cost Management & Cleanup",emoji:"🧹",xp:200,
+     explanation:"Real cost breakdown: Compute ~$24/month, storage ~$2.40/month, VPC endpoints optional (~$29/month — security vs cost trade-off). Model costs vary: Nova Lite is cheapest, Opus is most capable but priciest.\n\nBudget ~$26-56/month for the CloudFormation path. When done experimenting, delete the stack. But watch out: data protection volumes are retained by default — you'll need to manually remove them. Always clean up to avoid surprise bills.",
+     keyTakeaway:"Budget ~$26-56/mo for CloudFormation path. Delete stack when done experimenting.",
+     story:null,
+     challenge:{type:"fill-blank",question:"Calculate: If compute is ~$24/mo and storage is ~$2.40/mo, what's the minimum monthly cost WITHOUT VPC endpoints?",
+       blanks:[{prompt:"Minimum monthly cost (approximate):",answer:["26","26.40","$26","$26.40","26.4"]}]}}
+  ]
+}
+];
+
+const SPECIAL_BADGES = [
+  {id:"first-blood",name:"First Blood",icon:"🩸",desc:"Completed your very first level",condition:l=>l.includes("1.1")},
+  {id:"perfect-student",name:"Perfect Student",icon:"💯",desc:"Got 5 quizzes right on the first try",condition:(l,s)=>{let c=0;for(let k in s.quizResults)if(s.quizResults[k].perfect)c++;return c>=5}},
+  {id:"speed-demon",name:"Speed Demon",icon:"⚡",desc:"Completed 5 levels in under 2 minutes each",condition:(l,s)=>s.speedBonuses>=5},
+  {id:"story-collector",name:"Story Collector",icon:"📖",desc:"Unlocked 5 real-world stories",condition:(l,s)=>s.storiesUnlocked.length>=5},
+  {id:"story-master",name:"Story Master",icon:"📚",desc:"Unlocked every real-world story",condition:(l,s)=>s.storiesUnlocked.length>=20},
+  {id:"streak-runner",name:"Streak Runner",icon:"🔥",desc:"Completed 5 levels in a row without leaving",condition:(l,s)=>s.maxStreak>=5},
+  {id:"halfway-hero",name:"Halfway Hero",icon:"🏔️",desc:"Reached the halfway point",condition:(l,s)=>s.xp>=4400},
+  {id:"loop-believer",name:"Loop Believer",icon:"🔄",desc:"Understood the agentic loop — the core concept",condition:l=>l.includes("2.1")},
+  {id:"security-first",name:"Security First",icon:"🛡️",desc:"Prioritized security (as you should)",condition:l=>l.includes("7.1")},
+  {id:"boss-slayer",name:"Boss Slayer",icon:"🐉",desc:"Defeated the AWS deployment boss fight",condition:l=>l.includes("8.4")},
+  {id:"completionist",name:"Completionist",icon:"🏆",desc:"Earned every single badge in the game",condition:(l,s)=>s.badges.length>=19},
+  {id:"openclaw-master",name:"OpenClaw Master",icon:"👑",desc:"Completed the entire academy — you are a master",condition:(l,s)=>s.completedLevels.length>=31}
+];
+
+const RANKS = [
+  {xp:0,title:"Curious Human",icon:"🐣"},
+  {xp:500,title:"Agent Apprentice",icon:"🌱"},
+  {xp:1200,title:"Loop Runner",icon:"🔄"},
+  {xp:2200,title:"DNA Coder",icon:"🧬"},
+  {xp:3200,title:"Memory Weaver",icon:"🧠"},
+  {xp:4500,title:"Engine Tuner",icon:"⚙️"},
+  {xp:5800,title:"Power Wielder",icon:"⚡"},
+  {xp:7200,title:"Mission Commander",icon:"🎖️"},
+  {xp:8500,title:"Cloud Warrior",icon:"☁️"},
+  {xp:8875,title:"OpenClaw Master",icon:"👑"}
+];
+
+const ALL_STORIES = [];
+ZONES.forEach(z => z.levels.forEach(l => { if(l.story) ALL_STORIES.push({...l.story, levelId:l.id, zoneName:z.name, zoneColor:z.color}); }));
+
+// ===== STATE =====
+let state = {
+  xp:0, completedLevels:[], badges:[], storiesUnlocked:[], quizResults:{},
+  currentZone:1, currentLevel:null, streak:0, maxStreak:0, soundOn:false,
+  startTime:Date.now(), speedBonuses:0, levelStartTime:null
+};
+
+function loadState(){
+  try{
+    const s = localStorage.getItem('openclaw_state');
+    if(s){ const p=JSON.parse(s); Object.assign(state,p); }
+  }catch(e){}
+}
+function saveState(){
+  try{ localStorage.setItem('openclaw_state',JSON.stringify(state)); }catch(e){}
+}
+function resetState(){
+  if(!confirm('Reset ALL progress? This cannot be undone.')) return;
+  state={xp:0,completedLevels:[],badges:[],storiesUnlocked:[],quizResults:{},currentZone:1,currentLevel:null,streak:0,maxStreak:0,soundOn:state.soundOn,startTime:Date.now(),speedBonuses:0,levelStartTime:null};
+  saveState(); init();
+}
+
+// ===== SOUND ENGINE =====
+let audioCtx = null;
+function getAudioCtx(){ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
+function playSound(type){
+  if(!state.soundOn) return;
+  try{
+    const ctx=getAudioCtx(), now=ctx.currentTime;
+    const osc=ctx.createOscillator(), gain=ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    if(type==='xp'){osc.frequency.setValueAtTime(880,now);osc.frequency.exponentialRampToValueAtTime(1760,now+0.1);gain.gain.setValueAtTime(0.15,now);gain.gain.exponentialRampToValueAtTime(0.01,now+0.2);osc.start(now);osc.stop(now+0.2);}
+    else if(type==='success'){osc.frequency.setValueAtTime(523,now);osc.frequency.setValueAtTime(659,now+0.1);osc.frequency.setValueAtTime(784,now+0.2);gain.gain.setValueAtTime(0.15,now);gain.gain.exponentialRampToValueAtTime(0.01,now+0.4);osc.start(now);osc.stop(now+0.4);}
+    else if(type==='badge'){osc.frequency.setValueAtTime(440,now);osc.frequency.setValueAtTime(554,now+0.15);osc.frequency.setValueAtTime(659,now+0.3);osc.frequency.setValueAtTime(880,now+0.45);gain.gain.setValueAtTime(0.2,now);gain.gain.exponentialRampToValueAtTime(0.01,now+0.7);osc.start(now);osc.stop(now+0.7);}
+    else if(type==='wrong'){osc.type='sawtooth';osc.frequency.setValueAtTime(200,now);osc.frequency.exponentialRampToValueAtTime(100,now+0.2);gain.gain.setValueAtTime(0.1,now);gain.gain.exponentialRampToValueAtTime(0.01,now+0.3);osc.start(now);osc.stop(now+0.3);}
+    else if(type==='zone'){osc.frequency.setValueAtTime(440,now);osc.frequency.setValueAtTime(554,now+0.1);osc.frequency.setValueAtTime(659,now+0.2);osc.frequency.setValueAtTime(880,now+0.3);osc.frequency.setValueAtTime(1047,now+0.4);gain.gain.setValueAtTime(0.2,now);gain.gain.exponentialRampToValueAtTime(0.01,now+0.8);osc.start(now);osc.stop(now+0.8);}
+  }catch(e){}
+}
+
+// ===== HELPERS =====
+function getRank(){
+  let r=RANKS[0];
+  for(const rank of RANKS){ if(state.xp>=rank.xp) r=rank; }
+  return r;
+}
+function getNextRank(){
+  for(let i=0;i<RANKS.length;i++){ if(state.xp<RANKS[i].xp) return RANKS[i]; }
+  return null;
+}
+function isLevelCompleted(id){ return state.completedLevels.includes(id); }
+function isZoneCompleted(zoneId){
+  const z=ZONES.find(z=>z.id===zoneId);
+  return z && z.levels.every(l=>isLevelCompleted(l.id));
+}
+function isZoneUnlocked(zoneId){
+  if(zoneId===1) return true;
+  return isZoneCompleted(zoneId-1);
+}
+function isLevelUnlocked(levelId){
+  const parts=levelId.split('.');
+  const zoneId=parseInt(parts[0]);
+  const levelNum=parseInt(parts[1]);
+  if(!isZoneUnlocked(zoneId)) return false;
+  if(levelNum===1) return true;
+  const prevId=zoneId+'.'+(levelNum-1);
+  return isLevelCompleted(prevId);
+}
+function getZoneColor(zoneId){
+  const z=ZONES.find(z=>z.id===zoneId);
+  return z?z.color:'#00F0FF';
+}
+function getZoneForLevel(levelId){
+  return ZONES.find(z=>z.levels.some(l=>l.id===levelId));
+}
+function announce(msg){
+  const el=document.getElementById('aria-live');
+  el.textContent=msg;
+  setTimeout(()=>el.textContent='',3000);
+}
+
+// ===== XP SYSTEM =====
+function awardXP(amount, sourceEl){
+  state.xp+=amount;
+  playSound('xp');
+  updateTopBar();
+  saveState();
+  // Float animation
+  const float=document.createElement('div');
+  float.className='xp-float';
+  float.textContent='+'+amount+' XP';
+  if(sourceEl){
+    const r=sourceEl.getBoundingClientRect();
+    float.style.left=r.left+'px';
+    float.style.top=r.top+'px';
+  } else {
+    float.style.right='80px';
+    float.style.top='60px';
+  }
+  document.body.appendChild(float);
+  setTimeout(()=>float.remove(),1500);
+  announce('+'+amount+' XP earned!');
+}
+
+function completeLevel(levelId){
+  if(isLevelCompleted(levelId)) return;
+  const zone=getZoneForLevel(levelId);
+  const level=zone.levels.find(l=>l.id===levelId);
+  state.completedLevels.push(levelId);
+  state.streak++;
+  if(state.streak>state.maxStreak) state.maxStreak=state.streak;
+
+  // Speed bonus
+  if(state.levelStartTime && (Date.now()-state.levelStartTime)<120000){
+    state.speedBonuses++;
+    awardXP(25);
+  }
+  // Streak bonus
+  if(state.streak>0 && state.streak%3===0) awardXP(75);
+
+  // Level XP
+  awardXP(level.xp, document.querySelector('.challenge-submit'));
+
+  // Story unlock
+  if(level.story && !state.storiesUnlocked.includes(level.story.id)){
+    state.storiesUnlocked.push(level.story.id);
+    awardXP(25);
+  }
+
+  // Zone completion check
+  if(isZoneCompleted(zone.id)){
+    awardXP(zone.bonusXP);
+    playSound('zone');
+    if(!state.badges.includes(zone.badge.id)){
+      state.badges.push(zone.badge.id);
+      setTimeout(()=>showBadgeCelebration(zone.badge),500);
+    }
+  }
+
+  // Check special badges
+  checkSpecialBadges();
+
+  // Graduation check
+  if(state.completedLevels.length>=31 && !state.badges.includes('openclaw-master')){
+    state.badges.push('openclaw-master');
+    setTimeout(()=>{showBadgeCelebration({id:'openclaw-master',name:'OpenClaw Master',icon:'👑',desc:'Completed the entire academy!'});awardXP(1000);},1000);
+  }
+
+  saveState();
+  updateTopBar();
+  renderSidebar();
+}
+
+function checkSpecialBadges(){
+  SPECIAL_BADGES.forEach(b=>{
+    if(!state.badges.includes(b.id) && b.condition(state.completedLevels,state)){
+      state.badges.push(b.id);
+      setTimeout(()=>showBadgeCelebration(b),800);
+    }
+  });
+}
+
+// ===== UI RENDERING =====
+function updateTopBar(){
+  const rank=getRank();
+  document.getElementById('top-rank').textContent=rank.icon+' '+rank.title;
+  document.getElementById('top-xp').textContent='⭐ '+state.xp.toLocaleString()+' XP';
+  document.getElementById('top-badges').textContent='🏆 '+state.badges.length+'/20';
+  const pct=Math.round((state.completedLevels.length/31)*100);
+  document.getElementById('top-progress').textContent='📊 '+pct+'%';
+}
+
+function renderSidebar(){
+  const container=document.getElementById('sidebar-zones');
+  let html='<h3>Zones</h3>';
+  ZONES.forEach(z=>{
+    const unlocked=isZoneUnlocked(z.id);
+    const completed=isZoneCompleted(z.id);
+    const isCurrent=unlocked&&!completed;
+    const cls=completed?'completed':(isCurrent?'active':(unlocked?'':'locked'));
+    const status=completed?'✅':(isCurrent?'▶️':(unlocked?'🔓':'🔒'));
+    html+=`<div class="zone-item ${cls}" onclick="${unlocked?`toggleZoneLevels(${z.id})`:''}">
+      <span>${z.emoji}</span><span style="flex:1">${z.name}</span><span class="zone-status">${status}</span>
+    </div>
+    <div class="zone-levels" id="zone-levels-${z.id}">`;
+    z.levels.forEach(l=>{
+      const lUnlocked=isLevelUnlocked(l.id);
+      const lCompleted=isLevelCompleted(l.id);
+      const lCurrent=lUnlocked&&!lCompleted;
+      const lCls=lCompleted?'completed':(lCurrent?'active':(lUnlocked?'':'locked'));
+      const lStatus=lCompleted?'✅':(lCurrent?'▶️':'🔒');
+      html+=`<div class="level-item ${lCls}" onclick="${lUnlocked?`openLevel('${l.id}')`:''}">
+        <span>${lStatus}</span><span>${l.emoji} ${l.title}</span>
+      </div>`;
+    });
+    html+='</div>';
+  });
+  container.innerHTML=html;
+}
+
+function toggleZoneLevels(zoneId){
+  const el=document.getElementById('zone-levels-'+zoneId);
+  el.classList.toggle('open');
+}
+
+// ===== VIEW MANAGEMENT =====
+let currentView='map';
+function showView(view){
+  currentView=view;
+  ['zone-map','level-view','trophy-view','stats-view','stories-view','grad-view'].forEach(id=>{
+    document.getElementById(id).style.display='none';
+  });
+  document.querySelectorAll('.sidebar-nav button, #mobile-tabs button').forEach(b=>b.classList.remove('active'));
+
+  if(view==='map'){
+    document.getElementById('zone-map').style.display='grid';
+    renderZoneMap();
+    document.getElementById('nav-map')?.classList.add('active');
+    document.getElementById('tab-map')?.classList.add('active');
+  } else if(view==='level'){
+    document.getElementById('level-view').style.display='block';
+  } else if(view==='trophies'){
+    document.getElementById('trophy-view').style.display='block';
+    renderTrophyCase();
+    document.getElementById('nav-trophies')?.classList.add('active');
+    document.getElementById('tab-trophies')?.classList.add('active');
+  } else if(view==='stats'){
+    document.getElementById('stats-view').style.display='block';
+    renderStats();
+    document.getElementById('nav-stats')?.classList.add('active');
+    document.getElementById('tab-stats')?.classList.add('active');
+  } else if(view==='stories'){
+    document.getElementById('stories-view').style.display='block';
+    renderStories();
+    document.getElementById('nav-stories')?.classList.add('active');
+    document.getElementById('tab-stories')?.classList.add('active');
+  } else if(view==='graduation'){
+    document.getElementById('grad-view').style.display='block';
+    renderGraduation();
+  }
+}
+
+// ===== ZONE MAP =====
+function renderZoneMap(){
+  let html=`<div class="map-header">
+    <h1>🎮 OpenClaw Academy</h1>
+    <p>Master AI agents from zero to hero — 8 zones, 31 levels, one epic journey</p>
+  </div>`;
+  ZONES.forEach(z=>{
+    const unlocked=isZoneUnlocked(z.id);
+    const completed=isZoneCompleted(z.id);
+    const isCurrent=unlocked&&!completed;
+    const cls=completed?'completed':(isCurrent?'current':(unlocked?'':'locked'));
+    const completedCount=z.levels.filter(l=>isLevelCompleted(l.id)).length;
+    const pct=Math.round((completedCount/z.levels.length)*100);
+    html+=`<div class="zone-card ${cls}" style="--zone-color:${z.color}" onclick="${unlocked?`expandZone(${z.id})`:''}">
+      <div class="zone-emoji">${z.emoji}</div>
+      <div class="zone-name" style="color:${unlocked?z.color:'var(--locked)'}">${z.name}</div>
+      <div class="zone-theme">${z.theme}</div>
+      <div class="zone-progress"><div class="zone-progress-fill" style="width:${pct}%;background:${z.color}"></div></div>
+      <div class="zone-meta"><span>${completedCount}/${z.levels.length} levels</span><span>${unlocked?(completed?'✅ Complete':'▶️ In Progress'):'🔒 Locked'}</span></div>
+    </div>`;
+  });
+  // Graduation card
+  const allDone=ZONES.every(z=>isZoneCompleted(z.id));
+  html+=`<div class="zone-card ${allDone?'completed':'locked'}" style="--zone-color:#FFD700" onclick="${allDone?`showView('graduation')`:''}">
+    <div class="zone-emoji">🎓</div>
+    <div class="zone-name" style="color:${allDone?'#FFD700':'var(--locked)'}">Graduation</div>
+    <div class="zone-theme">Complete all zones to graduate</div>
+    <div class="zone-meta"><span>Final Ceremony</span><span>${allDone?'🎓 Ready':'🔒 Locked'}</span></div>
+  </div>`;
+  document.getElementById('zone-map').innerHTML=html;
+}
+
+function expandZone(zoneId){
+  const el=document.getElementById('zone-levels-'+zoneId);
+  // Open sidebar levels
+  document.querySelectorAll('.zone-levels').forEach(e=>e.classList.remove('open'));
+  if(el) el.classList.add('open');
+  // Find first incomplete level
+  const z=ZONES.find(z=>z.id===zoneId);
+  const nextLevel=z.levels.find(l=>!isLevelCompleted(l.id)&&isLevelUnlocked(l.id));
+  if(nextLevel) openLevel(nextLevel.id);
+  else if(z.levels.length) openLevel(z.levels[0].id);
+}
+
+// ===== LEVEL VIEW =====
+function openLevel(levelId){
+  const zone=getZoneForLevel(levelId);
+  const level=zone.levels.find(l=>l.id===levelId);
+  if(!level||!isLevelUnlocked(levelId)) return;
+  state.currentLevel=levelId;
+  state.levelStartTime=Date.now();
+  // Reset challenge state for fresh start
+  selectedMC=-1;
+  tfScore=0;tfAnswered=0;tfTotal=0;
+  saveState();
+  showView('level');
+  const completed=isLevelCompleted(levelId);
+  const color=zone.color;
+  let html=`<div class="level-header">
+    <div class="level-num" style="color:${color}">Zone ${zone.id}: ${zone.name} — Level ${level.id}</div>
+    <h1>${level.emoji} ${level.title}</h1>
+    <span class="level-xp">⭐ ${level.xp} XP</span>
+    ${completed?'<span style="margin-left:8px;color:var(--success);font-size:0.85rem">✅ Completed</span>':''}
+  </div>`;
+
+  // Explanation
+  html+=`<div class="content-card"><h2>📖 What Is It?</h2>`;
+  level.explanation.split('\n\n').forEach(p=>{
+    html+=`<p style="margin-bottom:12px">${p}</p>`;
+  });
+  html+=`</div>`;
+
+  // Key Takeaway
+  html+=`<div class="takeaway-box" style="--zone-color:${color};border-left-color:${color}">
+    <h2 style="font-size:0.9rem;margin-bottom:6px;color:${color}">💡 Key Takeaway</h2>
+    <p>${level.keyTakeaway}</p>
+  </div>`;
+
+  // Story
+  if(level.story){
+    const unlocked=state.storiesUnlocked.includes(level.story.id)||completed;
+    if(unlocked){
+      html+=`<div class="story-card" onclick="this.querySelector('.story-body').classList.toggle('open')">
+        <div class="story-header">📖 <span style="color:var(--gold)">${level.story.title}</span></div>
+        <div class="story-who">👤 ${level.story.who}'s Story</div>
+        <div class="story-body"><p>${level.story.content}</p>
+        <p class="story-lesson">💡 ${level.story.lesson}</p></div>
+      </div>`;
+    } else {
+      html+=`<div class="story-card locked">
+        <div class="story-header">🔒 <span>Complete this level to unlock the story</span></div>
+      </div>`;
+    }
+  }
+
+  // Challenge
+  if(!completed){
+    html+=renderChallenge(level, zone);
+  } else {
+    html+=`<div class="content-card" style="border-color:var(--success);background:#39FF1408">
+      <h2>✅ Challenge Completed</h2>
+      <p style="color:var(--text2)">You've already completed this level's challenge. Great work!</p>
+    </div>`;
+  }
+
+  // Navigation
+  const allLevels=[];
+  ZONES.forEach(z=>z.levels.forEach(l=>allLevels.push(l.id)));
+  const idx=allLevels.indexOf(levelId);
+  html+=`<div class="level-nav">`;
+  if(idx>0){
+    const prev=allLevels[idx-1];
+    html+=`<button class="btn-outline" onclick="openLevel('${prev}')">← Previous</button>`;
+  } else html+=`<span></span>`;
+  if(idx<allLevels.length-1 && completed){
+    const next=allLevels[idx+1];
+    if(isLevelUnlocked(next)){
+      html+=`<button class="btn-primary" style="--zone-color:${color}" onclick="openLevel('${next}')">Next Level →</button>`;
+    }
+  }
+  html+=`</div>`;
+
+  document.getElementById('level-view').innerHTML=html;
+  document.getElementById('level-view').scrollTop=0;
+  window.scrollTo(0,0);
+  renderSidebar();
+}
+
+// ===== CHALLENGE RENDERER =====
+function renderChallenge(level, zone){
+  const c=level.challenge;
+  const color=zone.color;
+  let html=`<div class="challenge-area" style="--zone-color:${color}" id="challenge-area">
+    <h2>🎯 Challenge</h2>
+    <div class="question">${c.question}</div>`;
+
+  switch(c.type){
+    case 'multiple-choice':
+      html+=renderMC(c, level.id, color);
+      break;
+    case 'drag-match':
+      html+=renderDragMatch(c, level.id, color);
+      break;
+    case 'ordering':
+      html+=renderOrdering(c, level.id, color);
+      break;
+    case 'fill-blank':
+      html+=renderFillBlank(c, level.id, color);
+      break;
+    case 'true-false':
+      html+=renderTrueFalse(c, level.id, color);
+      break;
+    case 'creative':
+      html+=renderCreative(c, level.id, color);
+      break;
+    case 'checklist':
+      html+=renderChecklist(c, level.id, color);
+      break;
+  }
+
+  html+=`<div class="challenge-result" id="challenge-result"></div></div>`;
+  return html;
+}
+
+// Multiple Choice
+function renderMC(c, levelId, color){
+  let html=`<div class="mc-options" id="mc-options" role="radiogroup">`;
+  c.options.forEach((opt,i)=>{
+    html+=`<div class="mc-option" data-idx="${i}" onclick="selectMC(this,${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectMC(this,${i})}" tabindex="0" role="radio" aria-checked="false">
+      <div class="radio"></div><span>${opt}</span>
+    </div>`;
+  });
+  html+=`</div>
+  <button class="challenge-submit btn-primary" style="--zone-color:${color}" onclick="submitMC('${levelId}',${c.correct})" id="mc-submit">Submit Answer</button>`;
+  return html;
+}
+let selectedMC=-1;
+function selectMC(el,idx){
+  if(el.closest('.challenge-area').querySelector('.mc-option.correct')) return;
+  selectedMC=idx;
+  el.closest('.mc-options').querySelectorAll('.mc-option').forEach(o=>{o.classList.remove('selected');o.setAttribute('aria-checked','false');});
+  el.classList.add('selected');
+  el.setAttribute('aria-checked','true');
+}
+function submitMC(levelId,correctIdx){
+  if(selectedMC<0) return;
+  const options=document.querySelectorAll('#mc-options .mc-option');
+  const result=document.getElementById('challenge-result');
+  options.forEach(o=>{
+    const idx=parseInt(o.dataset.idx);
+    if(idx===correctIdx) o.classList.add('correct');
+    else if(idx===selectedMC) o.classList.add('wrong');
+    o.style.pointerEvents='none';
+  });
+  if(selectedMC===correctIdx){
+    result.className='challenge-result success';
+    result.textContent='🎉 Correct! Well done!';
+    playSound('success');
+    if(!state.quizResults[levelId]) state.quizResults[levelId]={passed:true,perfect:true,attempts:1};
+    completeLevel(levelId);
+    setTimeout(()=>openLevel(levelId),800);
+  } else {
+    result.className='challenge-result fail';
+    result.textContent='❌ Not quite. The correct answer is highlighted in green.';
+    playSound('wrong');
+    if(!state.quizResults[levelId]) state.quizResults[levelId]={passed:true,perfect:false,attempts:1};
+    else state.quizResults[levelId].attempts++;
+    // Still complete on wrong answer
+    completeLevel(levelId);
+    setTimeout(()=>openLevel(levelId),1200);
+  }
+  saveState();
+  selectedMC=-1;
+}
+
+// Drag & Drop Matching
+function renderDragMatch(c, levelId, color){
+  const shuffled=[...c.pairs].sort(()=>Math.random()-0.5);
+  const targets=[...new Set(c.pairs.map(p=>p.target))].sort(()=>Math.random()-0.5);
+  let html=`<div class="dd-container" id="dd-container" data-level="${levelId}" data-total="${targets.length}">
+    <div><div class="dd-label">Drag these items:</div><div class="dd-items" id="dd-items">`;
+  // Collect unique items
+  const items=[...new Set(c.pairs.map(p=>p.item))].sort(()=>Math.random()-0.5);
+  items.forEach((item,i)=>{
+    html+=`<div class="dd-item" draggable="true" data-item="${item}" id="dd-item-${i}"
+      ondragstart="ddStart(event)" ondragend="ddEnd(event)">${item}</div>`;
+  });
+  html+=`</div></div><div><div class="dd-label">Drop onto targets:</div><div class="dd-targets" id="dd-targets">`;
+  targets.forEach((t,i)=>{
+    html+=`<div class="dd-target" data-target="${t}" id="dd-target-${i}"
+      ondragover="ddOver(event)" ondragleave="ddLeave(event)" ondrop="ddDrop(event)">${t}</div>`;
+  });
+  html+=`</div></div></div>
+  <button class="challenge-submit btn-primary" style="--zone-color:${color}" onclick="submitDD('${levelId}')" id="dd-submit">Check Matches</button>`;
+  return html;
+}
+let ddData='';
+function ddStart(e){e.dataTransfer.setData('text',e.target.dataset.item);ddData=e.target.dataset.item;e.target.classList.add('dragging');}
+function ddEnd(e){e.target.classList.remove('dragging');}
+function ddOver(e){e.preventDefault();e.currentTarget.classList.add('over');}
+function ddLeave(e){e.currentTarget.classList.remove('over');}
+function ddDrop(e){
+  e.preventDefault();
+  e.currentTarget.classList.remove('over');
+  const item=e.dataTransfer.getData('text');
+  e.currentTarget.dataset.dropped=item;
+  e.currentTarget.innerHTML=`<strong>${item}</strong> → ${e.currentTarget.dataset.target}`;
+  e.currentTarget.classList.add('filled');
+}
+function submitDD(levelId){
+  const container=document.getElementById('dd-container');
+  const zone=getZoneForLevel(levelId);
+  const level=zone.levels.find(l=>l.id===levelId);
+  const pairs=level.challenge.pairs;
+  const targets=document.querySelectorAll('#dd-targets .dd-target');
+  let correct=0, total=targets.length;
+  // Build lookup: target -> valid items
+  const lookup={};
+  pairs.forEach(p=>{if(!lookup[p.target])lookup[p.target]=[];lookup[p.target].push(p.item);});
+  targets.forEach(t=>{
+    const dropped=t.dataset.dropped;
+    const target=t.dataset.target;
+    if(dropped && lookup[target] && lookup[target].includes(dropped)){
+      t.classList.add('filled');t.classList.remove('wrong-fill');correct++;
+    } else if(dropped){
+      t.classList.add('wrong-fill');t.classList.remove('filled');
+    }
+  });
+  const result=document.getElementById('challenge-result');
+  if(correct>=Math.ceil(total*0.6)){
+    result.className='challenge-result success';
+    result.textContent=`🎉 ${correct}/${total} correct! Great matching!`;
+    playSound('success');
+    if(!state.quizResults[levelId]) state.quizResults[levelId]={passed:true,perfect:correct===total,attempts:1};
+    completeLevel(levelId);
+    setTimeout(()=>openLevel(levelId),800);
+  } else {
+    result.className='challenge-result fail';
+    result.textContent=`❌ ${correct}/${total} correct. Try dragging items to different targets.`;
+    playSound('wrong');
+    if(!state.quizResults[levelId]) state.quizResults[levelId]={passed:false,perfect:false,attempts:1};
+    else state.quizResults[levelId].attempts++;
+    // Complete anyway after attempt
+    completeLevel(levelId);
+    setTimeout(()=>openLevel(levelId),1200);
+  }
+  saveState();
+}
+
+// Ordering
+function renderOrdering(c, levelId, color){
+  const shuffled=c.items.map((item,i)=>({text:item,origIdx:i})).sort(()=>Math.random()-0.5);
+  let html=`<div class="order-list" id="order-list" data-level="${levelId}">`;
+  shuffled.forEach((item,i)=>{
+    html+=`<div class="order-item" draggable="true" data-orig="${item.origIdx}"
+      ondragstart="orderDragStart(event,${i})" ondragover="orderDragOver(event)" ondrop="orderDrop(event,${i})">
+      <span class="grip">⠿</span><span>${item.text}</span>
+    </div>`;
+  });
+  html+=`</div>
+  <button class="challenge-submit btn-primary" style="--zone-color:${color}" onclick="submitOrder('${levelId}')" id="order-submit">Check Order</button>`;
+  return html;
+}
+let orderDragIdx=-1;
+function orderDragStart(e,idx){orderDragIdx=idx;e.dataTransfer.effectAllowed='move';}
+function orderDragOver(e){e.preventDefault();}
+function orderDrop(e,dropIdx){
+  e.preventDefault();
+  const list=document.getElementById('order-list');
+  const items=[...list.children];
+  if(orderDragIdx<0||orderDragIdx===dropIdx) return;
+  const dragEl=items[orderDragIdx];
+  const dropEl=items[dropIdx];
+  if(orderDragIdx<dropIdx) list.insertBefore(dragEl,dropEl.nextSibling);
+  else list.insertBefore(dragEl,dropEl);
+  orderDragIdx=-1;
+}
+function submitOrder(levelId){
+  const zone=getZoneForLevel(levelId);
+  const level=zone.levels.find(l=>l.id===levelId);
+  const list=document.getElementById('order-list');
+  const items=[...list.children];
+  let correct=0;
+  items.forEach((el,i)=>{
+    const orig=parseInt(el.dataset.orig);
+    if(orig===level.challenge.correctOrder[i]){
+      el.classList.add('correct-pos');correct++;
+    } else {
+      el.classList.add('wrong-pos');
+    }
+  });
+  const result=document.getElementById('challenge-result');
+  const total=items.length;
+  if(correct>=Math.ceil(total*0.8)){
+    result.className='challenge-result success';
+    result.textContent=`🎉 ${correct}/${total} in correct position! Great sequencing!`;
+    playSound('success');
+    if(!state.quizResults[levelId]) state.quizResults[levelId]={passed:true,perfect:correct===total,attempts:1};
+    completeLevel(levelId);
+    setTimeout(()=>openLevel(levelId),800);
+  } else {
+    result.className='challenge-result fail';
+    result.textContent=`❌ ${correct}/${total} correct. Green = right position, red = wrong.`;
+    playSound('wrong');
+    completeLevel(levelId);
+    setTimeout(()=>openLevel(levelId),1200);
+  }
+  saveState();
+}
+
+// Fill in the Blank
+function renderFillBlank(c, levelId, color){
+  let html='';
+  c.blanks.forEach((b,i)=>{
+    html+=`<div class="fill-group">
+      <label>${b.prompt}</label>
+      <input type="text" class="fill-blank-input" id="fill-${i}" placeholder="Type your answer..." autocomplete="off">
+    </div>`;
+  });
+  html+=`<button class="challenge-submit btn-primary" style="--zone-color:${color}" onclick="submitFill('${levelId}')" id="fill-submit">Submit</button>`;
+  return html;
+}
+function submitFill(levelId){
+  const zone=getZoneForLevel(levelId);
+  const level=zone.levels.find(l=>l.id===levelId);
+  const blanks=level.challenge.blanks;
+  let correct=0;
+  blanks.forEach((b,i)=>{
+    const input=document.getElementById('fill-'+i);
+    const val=input.value.trim().toLowerCase().replace(/[,$]/g,'');
+    const match=b.answer.some(a=>val===a.toLowerCase()||val.includes(a.toLowerCase()));
+    if(match){input.classList.add('correct');correct++;}
+    else{input.classList.add('wrong');}
+    input.disabled=true;
+  });
+  const result=document.getElementById('challenge-result');
+  if(correct>=Math.ceil(blanks.length*0.5)){
+    result.className='challenge-result success';
+    result.textContent='🎉 Correct! Well done!';
+    playSound('success');
+    if(!state.quizResults[levelId]) state.quizResults[levelId]={passed:true,perfect:correct===blanks.length,attempts:1};
+    completeLevel(levelId);
+    setTimeout(()=>openLevel(levelId),800);
+  } else {
+    result.className='challenge-result fail';
+    result.textContent='❌ Not quite right. Check the highlighted fields.';
+    playSound('wrong');
+    completeLevel(levelId);
+    setTimeout(()=>openLevel(levelId),1200);
+  }
+  saveState();
+}
+
+// True/False Rapid Fire
+function renderTrueFalse(c, levelId, color){
+  let html='<div id="tf-container">';
+  c.statements.forEach((s,i)=>{
+    html+=`<div class="tf-question" id="tf-q-${i}">
+      <div class="tf-text">${s.text}</div>
+      <div class="tf-buttons">
+        <button class="tf-btn true-btn" onclick="answerTF(${i},true,'${levelId}')">True</button>
+        <button class="tf-btn false-btn" onclick="answerTF(${i},false,'${levelId}')">False</button>
+      </div>
+    </div>`;
+  });
+  html+='</div>';
+  return html;
+}
+let tfScore=0, tfTotal=0, tfAnswered=0;
+function answerTF(idx, answer, levelId){
+  const zone=getZoneForLevel(levelId);
+  const level=zone.levels.find(l=>l.id===levelId);
+  const stmt=level.challenge.statements[idx];
+  const q=document.getElementById('tf-q-'+idx);
+  if(q.classList.contains('answered')) return;
+  q.classList.add('answered');
+  const btns=q.querySelectorAll('.tf-btn');
+  const correct=answer===stmt.answer;
+  btns.forEach(b=>{
+    if(b.classList.contains('true-btn')&&answer===true) b.classList.add(correct?'chosen-correct':'chosen-wrong');
+    if(b.classList.contains('false-btn')&&answer===false) b.classList.add(correct?'chosen-correct':'chosen-wrong');
+    b.disabled=true;
+  });
+  if(correct){tfScore++;playSound('xp');}else{playSound('wrong');}
+  tfAnswered++;
+  tfTotal=level.challenge.statements.length;
+  if(tfAnswered>=tfTotal){
+    const result=document.getElementById('challenge-result');
+    if(tfScore>=Math.ceil(tfTotal*0.6)){
+      result.className='challenge-result success';
+      result.textContent=`🎉 ${tfScore}/${tfTotal} correct! Nice rapid fire!`;
+      playSound('success');
+    } else {
+      result.className='challenge-result fail';
+      result.textContent=`❌ ${tfScore}/${tfTotal} correct. Keep learning!`;
+    }
+    if(!state.quizResults[levelId]) state.quizResults[levelId]={passed:true,perfect:tfScore===tfTotal,attempts:1};
+    completeLevel(levelId);
+    setTimeout(()=>openLevel(levelId),1000);
+    saveState();
+    tfScore=0;tfAnswered=0;
+  }
+}
+
+// Creative Input
+function renderCreative(c, levelId, color){
+  let html=`<textarea class="creative-textarea" id="creative-input" placeholder="${c.placeholder||'Write your answer here...'}"></textarea>
+  <button class="challenge-submit btn-primary" style="--zone-color:${color}" onclick="submitCreative('${levelId}')" id="creative-submit">Submit</button>`;
+  return html;
+}
+function submitCreative(levelId){
+  const val=document.getElementById('creative-input').value.trim();
+  const result=document.getElementById('challenge-result');
+  if(val.length>0){
+    result.className='challenge-result success';
+    result.textContent='🎉 Great response! Every agent personality is unique.';
+    playSound('success');
+    if(!state.quizResults[levelId]) state.quizResults[levelId]={passed:true,perfect:true,attempts:1};
+    completeLevel(levelId);
+    setTimeout(()=>openLevel(levelId),800);
+  } else {
+    result.className='challenge-result fail';
+    result.textContent='Please write something before submitting.';
+    playSound('wrong');
+  }
+  saveState();
+}
+
+// Checklist
+function renderChecklist(c, levelId, color){
+  let html=`<div id="checklist-container">`;
+  c.items.forEach((item,i)=>{
+    html+=`<label class="checklist-item" onclick="this.classList.toggle('checked')">
+      <input type="checkbox" data-idx="${i}" data-good="${item.good}">
+      <span>${item.text}</span>
+    </label>`;
+  });
+  html+=`</div>
+  <button class="challenge-submit btn-primary" style="--zone-color:${color}" onclick="submitChecklist('${levelId}')" id="checklist-submit">Submit</button>`;
+  return html;
+}
+function submitChecklist(levelId){
+  const zone=getZoneForLevel(levelId);
+  const level=zone.levels.find(l=>l.id===levelId);
+  const checks=document.querySelectorAll('#checklist-container input[type=checkbox]');
+  let correct=0, total=checks.length;
+  checks.forEach(ch=>{
+    const isGood=ch.dataset.good==='true';
+    const isChecked=ch.checked;
+    const item=ch.closest('.checklist-item');
+    if((isGood&&isChecked)||(!isGood&&!isChecked)){
+      correct++;
+      if(isChecked) item.style.borderColor='var(--success)';
+    } else {
+      item.style.borderColor='var(--error)';
+    }
+    ch.disabled=true;
+  });
+  const result=document.getElementById('challenge-result');
+  if(correct>=Math.ceil(total*0.7)){
+    result.className='challenge-result success';
+    result.textContent=`🎉 ${correct}/${total} correct selections!`;
+    playSound('success');
+    if(!state.quizResults[levelId]) state.quizResults[levelId]={passed:true,perfect:correct===total,attempts:1};
+    completeLevel(levelId);
+    setTimeout(()=>openLevel(levelId),800);
+  } else {
+    result.className='challenge-result fail';
+    result.textContent=`❌ ${correct}/${total} correct. Green borders = right, red = wrong.`;
+    playSound('wrong');
+    completeLevel(levelId);
+    setTimeout(()=>openLevel(levelId),1200);
+  }
+  saveState();
+}
+
+// ===== TROPHY CASE =====
+function renderTrophyCase(){
+  let html=`<h1 style="margin-bottom:4px">🏆 Trophy Case</h1>
+  <p style="color:var(--text2);margin-bottom:16px">${state.badges.length} of 20 badges earned</p>
+  <div class="trophy-grid">`;
+
+  // Zone badges
+  ZONES.forEach(z=>{
+    const earned=state.badges.includes(z.badge.id);
+    html+=`<div class="badge-card ${earned?'earned':'locked'}">
+      <span class="badge-icon">${earned?z.badge.icon:'❓'}</span>
+      <div class="badge-name">${z.badge.name}</div>
+      <div class="badge-desc">${earned?z.badge.desc:'Complete Zone '+z.id}</div>
+    </div>`;
+  });
+
+  // Special badges
+  SPECIAL_BADGES.forEach(b=>{
+    const earned=state.badges.includes(b.id);
+    html+=`<div class="badge-card ${earned?'earned':'locked'}">
+      <span class="badge-icon">${earned?b.icon:'❓'}</span>
+      <div class="badge-name">${b.name}</div>
+      <div class="badge-desc">${earned?b.desc:'Keep playing to unlock'}</div>
+    </div>`;
+  });
+
+  html+=`</div>`;
+  document.getElementById('trophy-view').innerHTML=html;
+}
+
+// ===== STATS VIEW =====
+function renderStats(){
+  const rank=getRank();
+  const nextRank=getNextRank();
+  const totalLevels=31;
+  const totalStories=ALL_STORIES.length;
+  const elapsed=Math.floor((Date.now()-state.startTime)/60000);
+  const hours=Math.floor(elapsed/60);
+  const mins=elapsed%60;
+
+  let html=`<h1 style="margin-bottom:16px">📊 Your Stats</h1>
+  <div class="stat-card">
+    <h3>Current Rank</h3>
+    <div class="stat-value">${rank.icon} ${rank.title}</div>
+    ${nextRank?`<div style="color:var(--text2);font-size:0.85rem;margin-top:4px">Next: ${nextRank.icon} ${nextRank.title} at ${nextRank.xp.toLocaleString()} XP</div>
+    <div class="stat-bar"><div class="stat-bar-fill" style="width:${Math.min(100,((state.xp-rank.xp)/(nextRank.xp-rank.xp))*100)}%;background:var(--gold)"></div></div>`:'<div style="color:var(--gold);margin-top:4px">🎉 Maximum rank achieved!</div>'}
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card"><h3>Total XP</h3><div class="stat-value">${state.xp.toLocaleString()}</div></div>
+    <div class="stat-card"><h3>Levels Completed</h3><div class="stat-value">${state.completedLevels.length}/${totalLevels}</div></div>
+    <div class="stat-card"><h3>Zones Completed</h3><div class="stat-value">${ZONES.filter(z=>isZoneCompleted(z.id)).length}/8</div></div>
+    <div class="stat-card"><h3>Stories Unlocked</h3><div class="stat-value">${state.storiesUnlocked.length}/${totalStories}</div></div>
+    <div class="stat-card"><h3>Badges Earned</h3><div class="stat-value">${state.badges.length}/20</div></div>
+    <div class="stat-card"><h3>Current Streak</h3><div class="stat-value">🔥 ${state.streak}</div></div>
+    <div class="stat-card"><h3>Best Streak</h3><div class="stat-value">🔥 ${state.maxStreak}</div></div>
+    <div class="stat-card"><h3>Time Spent</h3><div class="stat-value">${hours}h ${mins}m</div></div>
+    <div class="stat-card"><h3>Speed Bonuses</h3><div class="stat-value">⚡ ${state.speedBonuses}</div></div>
+    <div class="stat-card"><h3>Perfect Quizzes</h3><div class="stat-value">💯 ${Object.values(state.quizResults).filter(q=>q.perfect).length}</div></div>
+  </div>
+  <button class="reset-btn" onclick="resetState()">🗑️ Reset All Progress</button>`;
+  document.getElementById('stats-view').innerHTML=html;
+}
+
+// ===== STORIES VIEW =====
+function renderStories(){
+  let html=`<h1 style="margin-bottom:4px">📖 Real Stories</h1>
+  <p style="color:var(--text2);margin-bottom:16px">${state.storiesUnlocked.length} of ${ALL_STORIES.length} stories unlocked</p>
+  <div class="stories-list">`;
+  ALL_STORIES.forEach(s=>{
+    const unlocked=state.storiesUnlocked.includes(s.id);
+    if(unlocked){
+      html+=`<div class="story-card" onclick="this.querySelector('.story-body').classList.toggle('open')">
+        <div class="story-header">📖 <span style="color:var(--gold)">${s.title}</span></div>
+        <div class="story-who">👤 ${s.who}'s Story · From Level ${s.levelId}</div>
+        <div class="story-body"><p>${s.content}</p>
+        <p class="story-lesson">💡 ${s.lesson}</p></div>
+      </div>`;
+    } else {
+      html+=`<div class="story-card locked">
+        <div class="story-header">🔒 <span>Complete Level ${s.levelId} to unlock</span></div>
+        <div class="story-who" style="color:var(--locked)">From ${s.zoneName}</div>
+      </div>`;
+    }
+  });
+  html+=`</div>`;
+  document.getElementById('stories-view').innerHTML=html;
+}
+
+// ===== GRADUATION =====
+function renderGraduation(){
+  launchConfetti();
+  const html=`<span class="grad-badge">👑</span>
+  <h1>Congratulations, OpenClaw Master!</h1>
+  <p>You've completed all 8 zones, mastered 31 levels, and earned the title of OpenClaw Master. You now understand autonomous AI agents from the ground up — from the agentic loop to AWS deployment.</p>
+  <div class="grad-stats">
+    <div class="grad-stat"><div class="val">${state.xp.toLocaleString()}</div><div class="lbl">Total XP</div></div>
+    <div class="grad-stat"><div class="val">${state.badges.length}</div><div class="lbl">Badges Earned</div></div>
+    <div class="grad-stat"><div class="val">${state.storiesUnlocked.length}</div><div class="lbl">Stories Unlocked</div></div>
+  </div>
+  <h2 style="font-size:1.2rem;margin:24px 0 12px;color:var(--gold)">🚀 What to Build Next</h2>
+  <p style="color:var(--text2);margin-bottom:16px">Your journey doesn't end here. Here are some ideas to get started:</p>
+  <div style="text-align:left;max-width:500px;margin:0 auto">
+    <p style="margin-bottom:8px">🤖 Set up your first OpenClaw agent on a dedicated machine</p>
+    <p style="margin-bottom:8px">📋 Write your SOUL.md, AGENTS.md, and USER.md files</p>
+    <p style="margin-bottom:8px">🔌 Connect MCP servers to your favorite tools</p>
+    <p style="margin-bottom:8px">👥 Build a multi-agent system with specialist agents</p>
+    <p style="margin-bottom:8px">☁️ Deploy to AWS using CloudFormation + Bedrock</p>
+  </div>
+  <div class="grad-links">
+    <a href="https://openclaw.ai" target="_blank">🌐 openclaw.ai</a>
+    <a href="https://clawhub.ai" target="_blank">🧩 ClawHub.ai</a>
+  </div>`;
+  document.getElementById('grad-view').innerHTML=html;
+}
+
+// ===== BADGE CELEBRATION =====
+function showBadgeCelebration(badge){
+  playSound('badge');
+  document.getElementById('celeb-badge-icon').textContent=badge.icon;
+  document.getElementById('celeb-badge-name').textContent=badge.name;
+  document.getElementById('celeb-badge-desc').textContent=badge.desc;
+  document.getElementById('badge-celebration').classList.add('show');
+  launchConfetti();
+}
+function closeCelebration(){
+  document.getElementById('badge-celebration').classList.remove('show');
+}
+
+// ===== CONFETTI =====
+function launchConfetti(){
+  const canvas=document.getElementById('confetti-canvas');
+  const ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+  const particles=[];
+  const colors=['#FFD700','#00F0FF','#BF00FF','#39FF14','#FF1493','#FF6B00','#FF2D55','#0080FF'];
+  for(let i=0;i<120;i++){
+    particles.push({
+      x:Math.random()*canvas.width,
+      y:Math.random()*canvas.height-canvas.height,
+      w:Math.random()*8+4,
+      h:Math.random()*6+2,
+      color:colors[Math.floor(Math.random()*colors.length)],
+      vx:(Math.random()-0.5)*3,
+      vy:Math.random()*3+2,
+      rot:Math.random()*360,
+      rotV:(Math.random()-0.5)*10
+    });
+  }
+  let frame=0;
+  function animate(){
+    if(frame>180){ctx.clearRect(0,0,canvas.width,canvas.height);return;}
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;p.rot+=p.rotV;p.vy+=0.05;
+      ctx.save();
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle=p.color;
+      ctx.globalAlpha=Math.max(0,1-(frame/180));
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+    });
+    frame++;
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+// ===== MOBILE SIDEBAR TOGGLE =====
+document.getElementById('mobile-menu').addEventListener('click',()=>{
+  document.getElementById('sidebar').classList.toggle('open');
+});
+
+// ===== SOUND TOGGLE =====
+document.getElementById('sound-toggle').addEventListener('click',()=>{
+  state.soundOn=!state.soundOn;
+  document.getElementById('sound-toggle').textContent=state.soundOn?'🔊':'🔇';
+  saveState();
+  if(state.soundOn) playSound('xp');
+});
+
+// ===== INIT =====
+function init(){
+  loadState();
+  document.getElementById('sound-toggle').textContent=state.soundOn?'🔊':'🔇';
+  updateTopBar();
+  renderSidebar();
+  // Reset TF state
+  tfScore=0;tfAnswered=0;selectedMC=-1;
+  // Check if graduation
+  if(state.completedLevels.length>=31){
+    showView('map');
+  } else {
+    showView('map');
+  }
+}
+
+// Close sidebar on main click (mobile)
+document.getElementById('main').addEventListener('click',()=>{
+  if(window.innerWidth<=1024) document.getElementById('sidebar').classList.remove('open');
+});
+
+// Handle resize
+window.addEventListener('resize',()=>{
+  if(window.innerWidth>1024) document.getElementById('sidebar').classList.remove('open');
+});
+
+init();
+</script>
+</body>
+</html>
