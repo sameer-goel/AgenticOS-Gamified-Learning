@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OpenClaw Academy — Gamified Interactive Tutorial</title>
-<meta name="description" content="Master AI agents from zero to hero with OpenClaw Academy — an interactive gamified tutorial with 8 zones, 31 levels, challenges, badges, and real-world stories from practitioners.">
+<meta name="description" content="Master AI agents from zero to hero with OpenClaw Academy — an interactive gamified tutorial with 9 zones, 39 levels, challenges, badges, and real-world stories from practitioners.">
 <meta property="og:title" content="OpenClaw Academy — Gamified Interactive Tutorial">
-<meta property="og:description" content="Master AI agents from zero to hero — 8 zones, 31 levels, challenges, badges, and real-world stories. Learn OpenClaw the fun way.">
+<meta property="og:description" content="Master AI agents from zero to hero — 9 zones, 39 levels, challenges, badges, and real-world stories. Learn OpenClaw the fun way.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#0A0A0F">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
@@ -19,7 +19,7 @@
 --bg:#0A0A0F;--bg2:#12121A;--bg3:#1A1A2E;--bg-hover:#22223A;
 --text:#E8E8F0;--text2:#8888AA;--success:#39FF14;--error:#FF2D55;--locked:#444466;
 --gold:#FFD700;
---z1:#00F0FF;--z2:#BF00FF;--z3:#39FF14;--z4:#FFD700;--z5:#FF1493;--z6:#FF6B00;--z7:#FF2D55;--z8:#0080FF;
+--z1:#00F0FF;--z2:#BF00FF;--z3:#39FF14;--z4:#FFD700;--z5:#FF1493;--z6:#FF6B00;--z7:#FF2D55;--z8:#0080FF;--z9:#00E676;
 --font-head:'Orbitron',sans-serif;--font-body:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace;
 --sidebar-w:260px;
 }
@@ -694,6 +694,105 @@ const ZONES = [
      challenge:{type:"fill-blank",question:"Calculate: If compute is ~$24/mo and storage is ~$2.40/mo, what's the minimum monthly cost WITHOUT VPC endpoints?",
        blanks:[{prompt:"Minimum monthly cost (approximate):",answer:["26","26.40","$26","$26.40","26.4"]}]}}
   ]
+},
+{
+  id:9, name:"Agentic Patterns", emoji:"🧩", theme:"The Pattern Library", color:"#00E676", bonusXP:500,
+  badge:{id:"pattern-master",name:"Pattern Master",icon:"🧩",desc:"Mastered all 8 core agentic AI design patterns"},
+  levels:[
+    {id:"9.1",title:"ReAct Loop",emoji:"🔄",xp:175,
+     explanation:"ReAct (Reason + Act) is the foundational pattern behind every capable AI agent. Instead of generating one big answer, the agent alternates between <strong>thinking</strong> and <strong>doing</strong>. It reasons about what to do next, takes an action (calls a tool), observes the result, then reasons again.\n\nThe loop looks like: Thought → Action → Observation → Thought → Action → Observation… until the task is complete. This is what separates a chatbot from an agent. A chatbot generates a response in one shot. A ReAct agent iterates: it reads a file, notices an error, edits the code, runs tests, sees a failure, tries a different fix. Each cycle refines its understanding.\n\nOpenClaw's agentic loop IS a ReAct loop. Every time your agent picks a tool, reads the output, and decides what to do next — that's ReAct in action. The pattern was formalized in a 2022 paper by Yao et al., but the idea is intuitive: think before you act, learn from what you see.",
+     keyTakeaway:"ReAct = Reason + Act. Think → Do → Observe → Repeat. The heartbeat of every agent.",
+     story:{id:"story-21",title:"The Bug That Fixed Itself",who:"Bhanu",
+       content:"Bhanu's developer agent hit a failing test. Instead of stopping, the ReAct loop kicked in: read the error → reasoned about the cause → edited the code → ran tests again → still failing → tried a different approach → tests passed. Four iterations, zero human input. The loop is the magic.",
+       lesson:"ReAct isn't magic — it's persistence with intelligence. Each cycle gets closer to the answer."},
+     challenge:{type:"ordering",question:"Put the ReAct loop steps in the correct order:",
+       items:["Thought: reason about what to do","Action: call a tool or take a step","Observation: read the result","Thought: evaluate — is the task done?","Action: take the next step based on evaluation"],
+       correctOrder:[0,1,2,3,4]}},
+    {id:"9.2",title:"Tool Use Strategy",emoji:"🔧",xp:175,
+     explanation:"Agents don't just have tools — they need a <strong>strategy</strong> for using them. The three core strategies are:\n\n<strong>1. Sequential:</strong> Use tools one after another, each building on the last. Read file → Edit file → Run tests. Simple, predictable.\n\n<strong>2. Parallel:</strong> Fire multiple tools simultaneously when they're independent. Search the web AND check the calendar AND read emails — all at once. Faster, but requires understanding which tasks are independent.\n\n<strong>3. Conditional:</strong> Choose tools based on context. If the file is Python, use pytest. If it's JavaScript, use jest. If there's no test file, create one first.\n\nThe best agents combine all three. OpenClaw naturally handles this — when you give it a complex task, it sequences dependent steps, parallelizes independent ones, and picks the right tool for each situation. The key insight: tool selection IS reasoning. The choice of which tool to use next reveals the agent's understanding of the problem.",
+     keyTakeaway:"Three strategies: Sequential, Parallel, Conditional. The best agents combine all three.",
+     story:null,
+     challenge:{type:"drag-match",question:"Match each tool use scenario to the correct strategy:",
+       pairs:[
+         {item:"Read file → Edit → Run tests",target:"Sequential"},
+         {item:"Search web + Check calendar + Read emails at once",target:"Parallel"},
+         {item:"If Python use pytest, if JS use jest",target:"Conditional"},
+         {item:"Fetch API data → Parse → Store results",target:"Sequential"}
+       ]}},
+    {id:"9.3",title:"Multi-Agent Orchestration",emoji:"🎼",xp:200,
+     explanation:"When one agent isn't enough, you need orchestration patterns. There are four primary models:\n\n<strong>1. Hub & Spoke:</strong> One lead agent delegates to specialists. Jarvis sends tasks to the developer agent, research agent, and content agent. Simple hierarchy, clear chain of command.\n\n<strong>2. Pipeline:</strong> Agents pass work along in stages. Research agent → Writer agent → Editor agent → Publisher agent. Each adds value, like an assembly line.\n\n<strong>3. Swarm:</strong> Multiple agents work on the same problem independently, then vote or merge results. Good for complex research or creative tasks where diverse perspectives help.\n\n<strong>4. Supervisor:</strong> A meta-agent watches other agents, intervenes when they're stuck, reallocates resources, and ensures quality. Like a project manager watching the team.\n\nBhanu uses Hub & Spoke with Jarvis as the hub. The key principle: match the pattern to the problem. Sequential work → Pipeline. Diverse analysis → Swarm. General delegation → Hub & Spoke.",
+     keyTakeaway:"Four models: Hub & Spoke, Pipeline, Swarm, Supervisor. Match pattern to problem.",
+     story:{id:"story-22",title:"Jarvis as the Hub — An Agent Army",who:"Bhanu",
+       content:"Bhanu's Jarvis is the hub in a Hub & Spoke pattern. It delegates to a developer agent for code, a research agent for intelligence, a retention agent (Brute) for customer monitoring, and a content agent for marketing. Each specialist has its own workspace, memory, and personality — but Jarvis coordinates them all.",
+       lesson:"Hub & Spoke works when you need one brain making decisions and many hands executing."},
+     challenge:{type:"drag-match",question:"Match each orchestration pattern to its best use case:",
+       pairs:[
+         {item:"Hub & Spoke",target:"One lead delegates to many specialists"},
+         {item:"Pipeline",target:"Work passes through stages in sequence"},
+         {item:"Swarm",target:"Multiple agents tackle the same problem independently"},
+         {item:"Supervisor",target:"Meta-agent watches and intervenes when needed"}
+       ]}},
+    {id:"9.4",title:"Chain of Thought",emoji:"💭",xp:175,
+     explanation:"Chain of Thought (CoT) is the pattern of making the agent <strong>show its work</strong>. Instead of jumping straight to an answer, the agent breaks down its reasoning step by step.\n\n<strong>Zero-shot CoT:</strong> Just add \"Let's think step by step\" to the prompt. Surprisingly effective — the model naturally decomposes the problem.\n\n<strong>Few-shot CoT:</strong> Show examples of step-by-step reasoning, then ask the new question. The model mimics the demonstrated reasoning pattern.\n\n<strong>Self-consistency:</strong> Generate multiple chains of thought, then pick the most common answer. Like asking the same question five different ways and going with the consensus.\n\nIn OpenClaw, CoT happens naturally when the agent reasons in its thinking block before taking actions. The SOUL.md and AGENTS.md files can encourage more or less detailed reasoning. Bhanu's developer agent reasons through code changes before making them — \"this function handles X, so if I change Y, it might affect Z.\"",
+     keyTakeaway:"CoT = show your work. Zero-shot, few-shot, and self-consistency variants.",
+     story:null,
+     challenge:{type:"multiple-choice",question:"What's the simplest way to trigger Chain of Thought reasoning?",
+       options:["Write a 500-line prompt","Add 'Let's think step by step' to the prompt","Use a bigger model","Disable all tools"],correct:1}},
+    {id:"9.5",title:"Memory Patterns",emoji:"🗃️",xp:175,
+     explanation:"How an agent remembers determines how smart it acts. There are distinct memory patterns:\n\n<strong>1. Scratchpad (Working Memory):</strong> Temporary notes during a task. \"I've checked files A, B, C — D is next.\" Disappears when the task ends.\n\n<strong>2. Episodic Memory:</strong> Records of past events. OpenClaw's daily notes (memory/YYYY-MM-DD.md) are episodic — what happened today. Used for recall: \"Last Tuesday you asked me to follow up with Alex.\"\n\n<strong>3. Semantic Memory:</strong> Curated knowledge and facts. MEMORY.md is semantic — distilled wisdom, not raw events. \"Sameer prefers concise answers\" is semantic memory.\n\n<strong>4. Procedural Memory:</strong> How to do things. Skills and TOOLS.md are procedural — \"Here's how to deploy to AWS.\" \"Here's how to check email.\"\n\nThe magic is combining all four. The agent uses working memory during tasks, stores events episodically, distills insights semantically, and executes via procedural knowledge. OpenClaw's file-based memory system maps directly to these patterns.",
+     keyTakeaway:"Four types: Scratchpad, Episodic, Semantic, Procedural. OpenClaw uses all four via files.",
+     story:{id:"story-23",title:"It Remembered What I Forgot",who:"Bhanu",
+       content:"Bhanu's agent uses all four memory patterns: scratchpad for in-progress tasks, daily notes for episodic recall, MEMORY.md for distilled wisdom, and skills for procedural knowledge. When it reminded him of a forgotten follow-up from 7 days ago, that was episodic memory + semantic understanding working together.",
+       lesson:"Memory patterns aren't academic — they're the difference between an agent that forgets and one that compounds knowledge."},
+     challenge:{type:"drag-match",question:"Match each memory type to its OpenClaw equivalent:",
+       pairs:[
+         {item:"Scratchpad (Working Memory)",target:"Temporary notes during a task"},
+         {item:"Episodic Memory",target:"Daily notes — memory/YYYY-MM-DD.md"},
+         {item:"Semantic Memory",target:"MEMORY.md — curated knowledge"},
+         {item:"Procedural Memory",target:"Skills and TOOLS.md — how to do things"}
+       ]}},
+    {id:"9.6",title:"Error Recovery & Self-Healing",emoji:"🛡️",xp:175,
+     explanation:"Good agents don't just handle happy paths — they recover from failures. The key error recovery patterns:\n\n<strong>1. Retry with Backoff:</strong> If an API call fails, wait and try again. Double the wait each time. Most transient errors resolve on retry.\n\n<strong>2. Fallback Chain:</strong> If tool A fails, try tool B. If the primary model is down, switch to a backup. OpenClaw's model-agnostic design enables this naturally.\n\n<strong>3. Self-Diagnosis:</strong> Read error messages, reason about the cause, and fix it. The agent that downloaded a transcription library when it couldn't process voice messages — that's self-healing in action.\n\n<strong>4. Graceful Degradation:</strong> If you can't do the full task, do what you can and report what's missing. \"I completed 8 of 10 items. Items 9 and 10 failed because the API is rate-limited. I'll retry in 1 hour.\"\n\nThe ReAct loop enables all of these — each failure becomes an observation that feeds back into reasoning. The agent doesn't crash; it adapts.",
+     keyTakeaway:"Four patterns: Retry, Fallback, Self-Diagnosis, Graceful Degradation. Failures feed the loop.",
+     story:null,
+     challenge:{type:"true-false",question:"True or False — Error recovery patterns:",
+       statements:[
+         {text:"A good agent stops completely when it encounters an error",answer:false},
+         {text:"Retry with exponential backoff means doubling the wait time each attempt",answer:true},
+         {text:"Fallback chains let the agent switch to alternative tools when one fails",answer:true},
+         {text:"Self-healing means the agent can never make mistakes",answer:false},
+         {text:"Graceful degradation means completing what you can and reporting what failed",answer:true}
+       ]}},
+    {id:"9.7",title:"Human-in-the-Loop",emoji:"🤝",xp:175,
+     explanation:"Not everything should be fully autonomous. Human-in-the-Loop (HITL) patterns define <strong>when and how</strong> to involve humans:\n\n<strong>1. Approval Gates:</strong> The agent does the work, then pauses for human approval before executing. \"I've drafted this email. Send it?\" OpenClaw supports this through permission configs.\n\n<strong>2. Escalation:</strong> The agent handles routine tasks autonomously but escalates edge cases. \"I can't figure out this customer complaint. Here's my analysis — what should I do?\"\n\n<strong>3. Confidence Thresholds:</strong> If the agent's confidence is above 90%, act autonomously. Below 90%, ask a human. This is how you tune the autonomy dial.\n\n<strong>4. Periodic Review:</strong> Let the agent work freely, but review outputs on a schedule. Bhanu reviews PRs that his developer agent creates — the agent commits freely to feature branches, but main requires human review.\n\nThe key principle from AGENTS.md: match autonomy to risk. High-stakes actions need gates. Low-stakes tasks can run free. Bhanu's rule: feature branches = autonomous, main branch = human review.",
+     keyTakeaway:"Match autonomy to risk. Four HITL patterns: Approval, Escalation, Confidence, Review.",
+     story:{id:"story-24",title:"Feature Branches Free, Main Branch Locked",who:"Bhanu",
+       content:"Bhanu's developer agent can commit freely to feature branches — full autonomy for low-risk work. But merging to main requires a human-reviewed PR. This is Human-in-the-Loop via periodic review: the agent works fast, Bhanu reviews at his pace. The bottleneck shifted from coding to reviewing.",
+       lesson:"HITL isn't about slowing agents down — it's about putting guardrails where they matter most."},
+     challenge:{type:"drag-match",question:"Match each HITL pattern to the right scenario:",
+       pairs:[
+         {item:"Approval Gates",target:"Agent drafts email, waits for 'Send it?' confirmation"},
+         {item:"Escalation",target:"Agent can't resolve an issue, asks human for guidance"},
+         {item:"Confidence Thresholds",target:"Above 90% confidence → auto-act, below → ask human"},
+         {item:"Periodic Review",target:"Agent commits to branches, human reviews PRs"}
+       ]}},
+    {id:"9.8",title:"Agent Team Design",emoji:"🏗️",xp:200,
+     explanation:"Designing an agent team is like designing an organization. The principles that make human teams work apply to agents too:\n\n<strong>1. Single Responsibility:</strong> Each agent does one thing well. Don't make a \"do everything\" agent — it'll drown in context. Bhanu learned this the hard way when one agent handling personal + business + code got muddled.\n\n<strong>2. Clear Communication:</strong> Agents need shared protocols. Mission Control HQ exists because agents needed a common dashboard to share information.\n\n<strong>3. Graduated Trust:</strong> New agents start with limited access. As they prove reliable, expand their permissions. Read-only → feature branches → full access.\n\n<strong>4. Shared Context:</strong> Some knowledge needs to be shared (company goals, brand voice) while other knowledge stays private (personal data, credentials). Design your workspaces accordingly.\n\n<strong>5. Failure Isolation:</strong> If one agent breaks, it shouldn't take down the whole system. Separate workspaces, separate memory, separate permissions.\n\nThe meta-pattern: <strong>treat agent design like org design</strong>. Hire for roles, set expectations, review performance, and scale by adding specialists — not by overloading generalists.",
+     keyTakeaway:"Agent team design = org design. Single responsibility, clear comms, graduated trust.",
+     story:{id:"story-25",title:"The Agent That Said: You Are the Bottleneck",who:"Bhanu",
+       content:"When Bhanu scaled to multiple agents, HE became the bottleneck — reviewing too many PRs, approving too many decisions. The agent literally told him. The solution: better team design. Clear responsibilities, automated approvals for low-risk work, escalation only for high-stakes decisions. The team design principle: optimize for flow, not control.",
+       lesson:"Scale your agent team like a startup: hire specialists, delegate aggressively, and get out of the way."},
+     challenge:{type:"checklist",question:"You're designing a 4-agent team. Select the GOOD design principles:",
+       items:[
+         {text:"Each agent has a single clear responsibility",good:true},
+         {text:"One agent handles everything to keep it simple",good:false},
+         {text:"Agents share a common communication protocol",good:true},
+         {text:"All agents have full admin access from day one",good:false},
+         {text:"New agents start with limited access and earn more",good:true},
+         {text:"If one agent fails, it takes down the whole system",good:false},
+         {text:"Each agent has its own workspace and memory",good:true}
+       ]}}
+  ]
 }
 ];
 
@@ -709,7 +808,7 @@ const SPECIAL_BADGES = [
   {id:"security-first",name:"Security First",icon:"🛡️",desc:"Prioritized security (as you should)",condition:l=>l.includes("7.1")},
   {id:"boss-slayer",name:"Boss Slayer",icon:"🐉",desc:"Defeated the AWS deployment boss fight",condition:l=>l.includes("8.4")},
   {id:"completionist",name:"Completionist",icon:"🏆",desc:"Earned every single badge in the game",condition:(l,s)=>s.badges.length>=19},
-  {id:"openclaw-master",name:"OpenClaw Master",icon:"👑",desc:"Completed the entire academy — you are a master",condition:(l,s)=>s.completedLevels.length>=31}
+  {id:"openclaw-master",name:"OpenClaw Master",icon:"👑",desc:"Completed the entire academy — you are a master",condition:(l,s)=>s.completedLevels.length>=39}
 ];
 
 const RANKS = [
@@ -870,7 +969,7 @@ function completeLevel(levelId){
   checkSpecialBadges();
 
   // Graduation check
-  if(state.completedLevels.length>=31 && !state.badges.includes('openclaw-master')){
+  if(state.completedLevels.length>=39 && !state.badges.includes('openclaw-master')){
     state.badges.push('openclaw-master');
     setTimeout(()=>{showBadgeCelebration({id:'openclaw-master',name:'OpenClaw Master',icon:'👑',desc:'Completed the entire academy!'});awardXP(1000);},1000);
   }
@@ -895,7 +994,7 @@ function updateTopBar(){
   document.getElementById('top-rank').textContent=rank.icon+' '+rank.title;
   document.getElementById('top-xp').textContent='⭐ '+state.xp.toLocaleString()+' XP';
   document.getElementById('top-badges').textContent='🏆 '+state.badges.length+'/20';
-  const pct=Math.round((state.completedLevels.length/31)*100);
+  const pct=Math.round((state.completedLevels.length/39)*100);
   document.getElementById('top-progress').textContent='📊 '+pct+'%';
 }
 
@@ -973,7 +1072,7 @@ function showView(view){
 function renderZoneMap(){
   let html=`<div class="map-header">
     <h1>🎮 OpenClaw Academy</h1>
-    <p>Master AI agents from zero to hero — 8 zones, 31 levels, one epic journey</p>
+    <p>Master AI agents from zero to hero — 9 zones, 39 levels, one epic journey</p>
   </div>`;
   ZONES.forEach(z=>{
     const unlocked=isZoneUnlocked(z.id);
@@ -1519,7 +1618,7 @@ function renderTrophyCase(){
 function renderStats(){
   const rank=getRank();
   const nextRank=getNextRank();
-  const totalLevels=31;
+  const totalLevels=39;
   const totalStories=ALL_STORIES.length;
   const elapsed=Math.floor((Date.now()-state.startTime)/60000);
   const hours=Math.floor(elapsed/60);
@@ -1535,7 +1634,7 @@ function renderStats(){
   <div class="stats-grid">
     <div class="stat-card"><h3>Total XP</h3><div class="stat-value">${state.xp.toLocaleString()}</div></div>
     <div class="stat-card"><h3>Levels Completed</h3><div class="stat-value">${state.completedLevels.length}/${totalLevels}</div></div>
-    <div class="stat-card"><h3>Zones Completed</h3><div class="stat-value">${ZONES.filter(z=>isZoneCompleted(z.id)).length}/8</div></div>
+    <div class="stat-card"><h3>Zones Completed</h3><div class="stat-value">${ZONES.filter(z=>isZoneCompleted(z.id)).length}/9</div></div>
     <div class="stat-card"><h3>Stories Unlocked</h3><div class="stat-value">${state.storiesUnlocked.length}/${totalStories}</div></div>
     <div class="stat-card"><h3>Badges Earned</h3><div class="stat-value">${state.badges.length}/20</div></div>
     <div class="stat-card"><h3>Current Streak</h3><div class="stat-value">🔥 ${state.streak}</div></div>
@@ -1578,7 +1677,7 @@ function renderGraduation(){
   launchConfetti();
   const html=`<span class="grad-badge">👑</span>
   <h1>Congratulations, OpenClaw Master!</h1>
-  <p>You've completed all 8 zones, mastered 31 levels, and earned the title of OpenClaw Master. You now understand autonomous AI agents from the ground up — from the agentic loop to AWS deployment.</p>
+  <p>You've completed all 9 zones, mastered 39 levels, and earned the title of OpenClaw Master. You now understand autonomous AI agents from the ground up — from the agentic loop to agentic design patterns and AWS deployment.</p>
   <div class="grad-stats">
     <div class="grad-stat"><div class="val">${state.xp.toLocaleString()}</div><div class="lbl">Total XP</div></div>
     <div class="grad-stat"><div class="val">${state.badges.length}</div><div class="lbl">Badges Earned</div></div>
@@ -1676,7 +1775,7 @@ function init(){
   // Reset TF state
   tfScore=0;tfAnswered=0;selectedMC=-1;
   // Check if graduation
-  if(state.completedLevels.length>=31){
+  if(state.completedLevels.length>=39){
     showView('map');
   } else {
     showView('map');

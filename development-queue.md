@@ -11,8 +11,8 @@
 - [x] `zone-8-boss` — Boss Level: Deploy on AWS (3 levels)
 
 ## Next Levels 🎯
-- [NEXT] `zone-9-agentic-patterns` — NEW ZONE: Agentic Patterns. Add Zone 9 with 8 levels covering core agentic AI design patterns. Each level has explanation + interactive challenge. Patterns: ReAct Loop, Tool Use Strategy, Multi-Agent Orchestration, Chain of Thought, Memory Patterns, Error Recovery & Self-Healing, Human-in-the-Loop, Agent Team Design. Follow existing zone structure in index.html. Add zone to ZONES array, add levels to LEVELS array, add challenges to CHALLENGES object.
-- [ ] `zone-10-real-world` — NEW ZONE: Real World Deployments. Levels: Enterprise Security (NemoClaw), Agent=Computer (Perplexity/Adaptive), Cloud↔Local Bridge, The Complexity Spectrum. Based on Claw Dots intelligence.
+- [x] `zone-9-agentic-patterns` — NEW ZONE: Agentic Patterns. 8 levels covering: ReAct Loop, Tool Use Strategy, Multi-Agent Orchestration, Chain of Thought, Memory Patterns, Error Recovery & Self-Healing, Human-in-the-Loop, Agent Team Design.
+- [NEXT] `zone-10-real-world` — NEW ZONE: Real World Deployments. Levels: Enterprise Security (NemoClaw), Agent=Computer (Perplexity/Adaptive), Cloud↔Local Bridge, The Complexity Spectrum. Based on Claw Dots intelligence.
 - [ ] `zone-11-build-your-own` — NEW ZONE: Build Your Own Agent. Interactive sandbox levels where player designs an agent: pick model, assign tools, set memory strategy, deploy. Capstone project.
 - [ ] `leaderboard` — Add persistent leaderboard with localStorage. Top scores, fastest completions, streak records.
 - [ ] `achievements` — Badge system: "First Blood" (complete level 1), "Speed Demon" (under 10s), "Perfect" (no wrong answers), "Marathon" (complete all zones).
