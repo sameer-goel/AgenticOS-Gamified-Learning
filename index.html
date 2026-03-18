@@ -1089,17 +1089,129 @@ function resetState(){
 // ===== SOUND ENGINE =====
 let audioCtx = null;
 function getAudioCtx(){ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
+
+// Helper: play a note with specific waveform, frequency, duration, and gain
+function _note(ctx,freq,startT,dur,vol,wave){
+  var o=ctx.createOscillator(),g=ctx.createGain();
+  o.type=wave||'sine';o.frequency.setValueAtTime(freq,startT);
+  g.gain.setValueAtTime(vol,startT);
+  g.gain.setValueAtTime(vol,startT+dur*0.6);
+  g.gain.exponentialRampToValueAtTime(0.001,startT+dur);
+  o.connect(g);g.connect(ctx.destination);
+  o.start(startT);o.stop(startT+dur);
+}
+
+// Helper: play a chord (array of frequencies)
+function _chord(ctx,freqs,startT,dur,vol,wave){
+  freqs.forEach(function(f){_note(ctx,f,startT,dur,vol/(freqs.length*0.6),wave||'sine');});
+}
+
+// Helper: noise burst for percussive sparkle effects
+function _noise(ctx,startT,dur,vol){
+  var bufSize=Math.max(1,Math.floor(ctx.sampleRate*dur));
+  var buf=ctx.createBuffer(1,bufSize,ctx.sampleRate);
+  var data=buf.getChannelData(0);
+  for(var i=0;i<bufSize;i++) data[i]=(Math.random()*2-1);
+  var src=ctx.createBufferSource();src.buffer=buf;
+  var filt=ctx.createBiquadFilter();filt.type='bandpass';filt.frequency.value=1000;filt.Q.value=0.5;
+  var g=ctx.createGain();g.gain.setValueAtTime(vol,startT);g.gain.exponentialRampToValueAtTime(0.001,startT+dur);
+  src.connect(filt);filt.connect(g);g.connect(ctx.destination);
+  src.start(startT);src.stop(startT+dur);
+}
+
 function playSound(type){
   if(!state.soundOn) return;
   try{
-    const ctx=getAudioCtx(), now=ctx.currentTime;
-    const osc=ctx.createOscillator(), gain=ctx.createGain();
-    osc.connect(gain); gain.connect(ctx.destination);
-    if(type==='xp'){osc.frequency.setValueAtTime(880,now);osc.frequency.exponentialRampToValueAtTime(1760,now+0.1);gain.gain.setValueAtTime(0.15,now);gain.gain.exponentialRampToValueAtTime(0.01,now+0.2);osc.start(now);osc.stop(now+0.2);}
-    else if(type==='success'){osc.frequency.setValueAtTime(523,now);osc.frequency.setValueAtTime(659,now+0.1);osc.frequency.setValueAtTime(784,now+0.2);gain.gain.setValueAtTime(0.15,now);gain.gain.exponentialRampToValueAtTime(0.01,now+0.4);osc.start(now);osc.stop(now+0.4);}
-    else if(type==='badge'){osc.frequency.setValueAtTime(440,now);osc.frequency.setValueAtTime(554,now+0.15);osc.frequency.setValueAtTime(659,now+0.3);osc.frequency.setValueAtTime(880,now+0.45);gain.gain.setValueAtTime(0.2,now);gain.gain.exponentialRampToValueAtTime(0.01,now+0.7);osc.start(now);osc.stop(now+0.7);}
-    else if(type==='wrong'){osc.type='sawtooth';osc.frequency.setValueAtTime(200,now);osc.frequency.exponentialRampToValueAtTime(100,now+0.2);gain.gain.setValueAtTime(0.1,now);gain.gain.exponentialRampToValueAtTime(0.01,now+0.3);osc.start(now);osc.stop(now+0.3);}
-    else if(type==='zone'){osc.frequency.setValueAtTime(440,now);osc.frequency.setValueAtTime(554,now+0.1);osc.frequency.setValueAtTime(659,now+0.2);osc.frequency.setValueAtTime(880,now+0.3);osc.frequency.setValueAtTime(1047,now+0.4);gain.gain.setValueAtTime(0.2,now);gain.gain.exponentialRampToValueAtTime(0.01,now+0.8);osc.start(now);osc.stop(now+0.8);}
+    var ctx=getAudioCtx(), t=ctx.currentTime;
+
+    if(type==='click'){
+      // Subtle UI click
+      _note(ctx,1800,t,0.04,0.08,'sine');
+      _note(ctx,2400,t+0.015,0.03,0.05,'sine');
+    }
+    else if(type==='xp'){
+      // XP gain — bright ascending sparkle with harmonics
+      _note(ctx,880,t,0.12,0.1,'sine');
+      _note(ctx,1320,t+0.04,0.1,0.08,'sine');
+      _note(ctx,1760,t+0.08,0.15,0.07,'triangle');
+      _noise(ctx,t,0.06,0.02);
+    }
+    else if(type==='success'){
+      // Correct answer — cheerful ascending major triad arpeggio + sparkle
+      _note(ctx,523.25,t,0.18,0.12,'sine');
+      _note(ctx,659.25,t+0.1,0.18,0.12,'sine');
+      _note(ctx,783.99,t+0.2,0.22,0.12,'sine');
+      _note(ctx,1046.5,t+0.3,0.3,0.1,'triangle');
+      _note(ctx,1568,t+0.35,0.2,0.04,'sine');
+      _noise(ctx,t+0.3,0.08,0.015);
+    }
+    else if(type==='wrong'){
+      // Wrong answer — dissonant descending buzz
+      _note(ctx,330,t,0.15,0.08,'sawtooth');
+      _note(ctx,277,t+0.08,0.15,0.07,'sawtooth');
+      _note(ctx,220,t+0.16,0.2,0.06,'sawtooth');
+      _noise(ctx,t,0.12,0.03);
+    }
+    else if(type==='badge'){
+      // Badge earned — triumphant fanfare with chords
+      _chord(ctx,[523.25,659.25,783.99],t,0.25,0.15,'sine');
+      _chord(ctx,[587.33,739.99,880],t+0.2,0.25,0.15,'sine');
+      _chord(ctx,[659.25,830.61,987.77],t+0.4,0.25,0.15,'sine');
+      _note(ctx,1046.5,t+0.55,0.5,0.12,'triangle');
+      _note(ctx,1318.5,t+0.6,0.5,0.08,'triangle');
+      _note(ctx,1568,t+0.65,0.5,0.06,'sine');
+      _noise(ctx,t+0.55,0.1,0.02);
+    }
+    else if(type==='zone'){
+      // Zone complete — epic ascending fanfare with full chords
+      _chord(ctx,[261.63,329.63,392],t,0.2,0.12,'sine');
+      _chord(ctx,[329.63,415.30,493.88],t+0.18,0.2,0.12,'sine');
+      _chord(ctx,[392,493.88,587.33],t+0.36,0.2,0.12,'sine');
+      _chord(ctx,[523.25,659.25,783.99],t+0.54,0.35,0.14,'sine');
+      _note(ctx,1046.5,t+0.7,0.5,0.1,'triangle');
+      _note(ctx,1318.5,t+0.75,0.5,0.08,'triangle');
+      _note(ctx,1568,t+0.8,0.5,0.06,'sine');
+      _note(ctx,2093,t+0.85,0.6,0.04,'sine');
+      _noise(ctx,t+0.54,0.15,0.025);
+      _noise(ctx,t+0.8,0.1,0.015);
+    }
+    else if(type==='streak'){
+      // Streak bonus — rapid ascending ping cascade
+      _note(ctx,660,t,0.1,0.08,'sine');
+      _note(ctx,880,t+0.06,0.1,0.08,'sine');
+      _note(ctx,1100,t+0.12,0.1,0.08,'triangle');
+      _note(ctx,1320,t+0.18,0.12,0.07,'triangle');
+      _note(ctx,1760,t+0.24,0.15,0.06,'sine');
+    }
+    else if(type==='unlock'){
+      // New zone unlock — magical ascending whoosh
+      _note(ctx,440,t,0.15,0.06,'sine');
+      _note(ctx,554,t+0.08,0.15,0.06,'sine');
+      _note(ctx,659,t+0.16,0.15,0.07,'triangle');
+      _note(ctx,880,t+0.24,0.2,0.08,'triangle');
+      _note(ctx,1100,t+0.32,0.2,0.06,'sine');
+      _noise(ctx,t+0.2,0.15,0.02);
+    }
+    else if(type==='drag'){
+      // Drag pickup — soft pop
+      _note(ctx,600,t,0.05,0.06,'sine');
+      _note(ctx,900,t+0.02,0.04,0.04,'sine');
+    }
+    else if(type==='drop'){
+      // Drop onto target — satisfying thunk
+      _note(ctx,400,t,0.08,0.07,'sine');
+      _note(ctx,600,t+0.02,0.06,0.05,'triangle');
+      _noise(ctx,t,0.04,0.02);
+    }
+    else if(type==='levelcomplete'){
+      // Level complete — warm completion jingle
+      _note(ctx,523.25,t,0.15,0.1,'sine');
+      _note(ctx,587.33,t+0.12,0.15,0.1,'sine');
+      _note(ctx,659.25,t+0.24,0.15,0.1,'sine');
+      _note(ctx,783.99,t+0.36,0.25,0.12,'sine');
+      _chord(ctx,[523.25,659.25,783.99],t+0.48,0.4,0.12,'triangle');
+      _noise(ctx,t+0.48,0.08,0.015);
+    }
   }catch(e){}
 }
 
@@ -1181,7 +1293,7 @@ function completeLevel(levelId){
     awardXP(25);
   }
   // Streak bonus
-  if(state.streak>0 && state.streak%3===0) awardXP(75);
+  if(state.streak>0 && state.streak%3===0){ awardXP(75); playSound('streak'); }
 
   // Leaderboard: record level completion time
   if(!state.leaderboard) state.leaderboard={runs:[],levelTimes:{},zoneCompletionTimes:{}};
@@ -1191,6 +1303,9 @@ function completeLevel(levelId){
       state.leaderboard.levelTimes[levelId]=lbElapsed;
     }
   }
+
+  // Level complete sound
+  playSound('levelcomplete');
 
   // Level XP
   awardXP(level.xp, document.querySelector('.challenge-submit'));
@@ -1203,6 +1318,7 @@ function completeLevel(levelId){
 
   // Zone completion check
   if(isZoneCompleted(zone.id)){
+    playSound('unlock');
     awardXP(zone.bonusXP);
     // Leaderboard: record zone completion time
     if(!state.leaderboard) state.leaderboard={runs:[],levelTimes:{},zoneCompletionTimes:{}};
@@ -1292,6 +1408,7 @@ function renderSidebar(){
 }
 
 function toggleZoneLevels(zoneId){
+  playSound('click');
   const el=document.getElementById('zone-levels-'+zoneId);
   el.classList.toggle('open');
 }
@@ -1371,6 +1488,7 @@ function renderZoneMap(){
 }
 
 function expandZone(zoneId){
+  playSound('click');
   const el=document.getElementById('zone-levels-'+zoneId);
   // Open sidebar levels
   document.querySelectorAll('.zone-levels').forEach(e=>e.classList.remove('open'));
@@ -1517,6 +1635,7 @@ function renderMC(c, levelId, color){
 let selectedMC=-1;
 function selectMC(el,idx){
   if(el.closest('.challenge-area').querySelector('.mc-option.correct')) return;
+  playSound('click');
   selectedMC=idx;
   el.closest('.mc-options').querySelectorAll('.mc-option').forEach(o=>{o.classList.remove('selected');o.setAttribute('aria-checked','false');});
   el.classList.add('selected');
@@ -1575,7 +1694,7 @@ function renderDragMatch(c, levelId, color){
   return html;
 }
 let ddData='';
-function ddStart(e){e.dataTransfer.setData('text',e.target.dataset.item);ddData=e.target.dataset.item;e.target.classList.add('dragging');}
+function ddStart(e){e.dataTransfer.setData('text',e.target.dataset.item);ddData=e.target.dataset.item;e.target.classList.add('dragging');playSound('drag');}
 function ddEnd(e){e.target.classList.remove('dragging');}
 function ddOver(e){e.preventDefault();e.currentTarget.classList.add('over');}
 function ddLeave(e){e.currentTarget.classList.remove('over');}
@@ -1585,8 +1704,9 @@ function ddDrop(e){
   const item=e.dataTransfer.getData('text');
   e.currentTarget.dataset.dropped=item;
   e.currentTarget.innerHTML=`<strong>${item}</strong> â ${e.currentTarget.dataset.target}`;
-  e.currentTarget.classList.add('filled');
-}
+  (e.currentTarget.classList.add('filled');
+  playSound('drop');
+})
 function submitDD(levelId){
   const container=document.getElementById('dd-container');
   const zone=getZoneForLevel(levelId);
@@ -1642,7 +1762,7 @@ function renderOrdering(c, levelId, color){
   return html;
 }
 let orderDragIdx=-1;
-function orderDragStart(e,idx){orderDragIdx=idx;e.dataTransfer.effectAllowed='move';}
+function orderDragStart(e,idx){orderDragIdx=idx;e.dataTransfer.effectAllowed='move';playSound('drag');}
 function orderDragOver(e){e.preventDefault();}
 function orderDrop(e,dropIdx){
   e.preventDefault();
@@ -1652,9 +1772,10 @@ function orderDrop(e,dropIdx){
   const dragEl=items[orderDragIdx];
   const dropEl=items[dropIdx];
   if(orderDragIdx<dropIdx) list.insertBefore(dragEl,dropEl.nextSibling);
-  else list.insertBefore(dragEl,dropEl);
+  (else list.insertBefore(dragEl,dropEl);
   orderDragIdx=-1;
-}
+  playSound('drop');
+})
 function submitOrder(levelId){
   const zone=getZoneForLevel(levelId);
   const level=zone.levels.find(l=>l.id===levelId);
@@ -1753,6 +1874,7 @@ function answerTF(idx, answer, levelId){
   const stmt=level.challenge.statements[idx];
   const q=document.getElementById('tf-q-'+idx);
   if(q.classList.contains('answered')) return;
+  playSound('click');
   q.classList.add('answered');
   const btns=q.querySelectorAll('.tf-btn');
   const correct=answer===stmt.answer;
@@ -1810,7 +1932,7 @@ function submitCreative(levelId){
 function renderChecklist(c, levelId, color){
   let html=`<div id="checklist-container">`;
   c.items.forEach((item,i)=>{
-    html+=`<label class="checklist-item" onclick="this.classList.toggle('checked')">
+    html+=`<label class="checklist-item" onclick="this.classList.toggle('checked');playSound('click')">
       <input type="checkbox" data-idx="${i}" data-good="${item.good}">
       <span>${item.text}</span>
     </label>`;

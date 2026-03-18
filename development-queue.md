@@ -19,8 +19,8 @@
 - [x] `zone-11-build-your-own` — NEW ZONE: Build Your Own Agent. 6 levels: Choose Your Model, Assign Tools, Design Memory Strategy, Set Boundaries, Multi-Agent Architecture, Deploy & Iterate. Capstone project.
 - [x] `leaderboard` — Add persistent leaderboard with localStorage. Top scores, fastest completions, streak records.
 - [x] `achievements` — Badge system: "First Blood" (complete level 1), "Speed Demon" (under 10s), "Perfect" (no wrong answers), "Marathon" (complete all zones).
-- [NEXT] `sound-effects` — Add subtle audio feedback: correct answer chime, wrong answer buzz, level complete fanfare, XP gain sound.
-- [ ] `dark-light-toggle` — Theme switcher matching Smart Intel's liquid glass ↔ dark mode.
+- [x] `sound-effects` — Add subtle audio feedback: correct answer chime, wrong answer buzz, level complete fanfare, XP gain sound.
+- [NEXT] `dark-light-toggle` — Theme switcher matching Smart Intel's liquid glass ↔ dark mode.
 - [ ] `share-cards` — Generate shareable achievement cards (canvas → PNG) for social media.
 - [ ] `mobile-gestures` — Swipe navigation between levels, touch-friendly drag & drop improvements.
 - [ ] `daily-challenge` — Auto-generated daily challenge from random levels with bonus XP.
