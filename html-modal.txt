@@ -1,0 +1,28 @@
+
+<!-- Share Card Modal -->
+<div id="share-card-modal" role="dialog" aria-label="Share achievement card">
+  <div class="share-card-container">
+    <h2>📤 Share Your Achievement</h2>
+    <div class="share-card-preview" id="share-card-preview">
+      <canvas id="share-canvas" width="800" height="1000"></canvas>
+    </div>
+    <div class="share-card-options" id="share-card-options">
+      <div class="share-card-option selected" data-type="badge" onclick="selectShareType(this,'badge')">
+        <div class="radio"></div>
+        <div><strong>🏆 Badge Card</strong><br><span style="color:var(--text2);font-size:0.8rem">Share your latest badge</span></div>
+      </div>
+      <div class="share-card-option" data-type="stats" onclick="selectShareType(this,'stats')">
+        <div class="radio"></div>
+        <div><strong>📊 Stats Card</strong><br><span style="color:var(--text2);font-size:0.8rem">Show your progress</span></div>
+      </div>
+      <div class="share-card-option" data-type="zone" onclick="selectShareType(this,'zone')">
+        <div class="radio"></div>
+        <div><strong>🗺️ Zone Complete</strong><br><span style="color:var(--text2);font-size:0.8rem">Celebrate zone completion</span></div>
+      </div>
+    </div>
+    <div class="share-card-actions">
+      <button class="btn-download" onclick="downloadShareCard()">⬇️ Download PNG</button>
+      <button class="btn-close-share" onclick="closeShareModal()">Close</button>
+    </div>
+  </div>
+</div>
