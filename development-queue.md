@@ -17,14 +17,12 @@
 - [x] `sound-effects` — Add subtle audio feedback: correct answer chime, wrong answer buzz, level complete fanfare, XP gain sound.
 - [x] `dark-light-toggle` — Theme switcher matching Smart Intel's liquid glass ↔ dark mode.
 - [x] `share-cards` — Generate shareable achievement cards (canvas → PNG) for social media.
+- [x] `multiplayer-quiz` — Multiplayer quiz mode with WebSocket real-time competition (demo with mock WebSocket + AI bot).
+- [x] `daily-challenge` — Auto-generated daily challenge from random levels with bonus XP.
 - [x] `mobile-gestures` — Swipe navigation between levels, touch-friendly drag & drop improvements.
 
-## Next Levels 🎯
-- [NEXT] `multiplayer-quiz` — Multiplayer quiz mode with WebSocket real-time competition.
-- [x] `daily-challenge` — Auto-generated daily challenge from random levels with bonus XP.
-
 ## Backlog (Ideas)
-- Multiplayer quiz mode (WebSocket)
+
 - AI-generated challenges based on latest agentic news
 - Integration with Smart Intel (link patterns to real-world signals)
 - Certificate generator (PDF) for completing all zones

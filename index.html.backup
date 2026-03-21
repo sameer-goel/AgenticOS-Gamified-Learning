@@ -486,6 +486,7 @@ button{font-family:var(--font-body);cursor:pointer;border:none;background:none;c
   <div class="sidebar-nav">
     <button onclick="showView('map')" id="nav-map">ðºï¸ Zone Map</button>
     <button onclick="showView('stories')" id="nav-stories">ð Stories</button>
+    <button onclick="showDailyChallenge()" id="nav-daily">🌟 Daily Challenge</button>
     <button onclick="showView('trophies')" id="nav-trophies">ð Trophy Case</button>
     <button onclick="showView('stats')" id="nav-stats">ð Stats</button>
     <button onclick="showView('leaderboard')" id="nav-leaderboard">ð Leaderboard</button>
@@ -2857,6 +2858,134 @@ document.getElementById('main').addEventListener('click',()=>{
 window.addEventListener('resize',()=>{
   if(window.innerWidth>1024) document.getElementById('sidebar').classList.remove('open');
 });
+
+// ===== DAILY CHALLENGE SYSTEM =====
+function getDailyChallengeData() {
+  const today = new Date().toISOString().split('T')[0];
+  const seed = today.split('-').reduce((a, b) => parseInt(a) * 31 + parseInt(b), 0);
+  const availableLevels = [];
+  ZONES.forEach(zone => {
+    zone.levels.forEach(level => {
+      if (level.challenge && isLevelCompleted(level.id)) {
+        availableLevels.push({levelId: level.id,zoneId: zone.id,title: level.title,emoji: level.emoji,xp: level.xp,challenge: level.challenge});
+      }
+    });
+  });
+  if (availableLevels.length === 0) return null;
+  return availableLevels[seed % availableLevels.length];
+}
+
+function showDailyChallenge() {
+  playSound('click');
+  document.querySelectorAll('.sidebar-nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('nav-daily')?.classList.add('active');
+  const challengeData = getDailyChallengeData();
+  if (!challengeData) {
+    alert('Complete at least one level to unlock daily challenges!');
+    showView('map');
+    return;
+  }
+  const today = new Date().toISOString().split('T')[0];
+  const dailyState = state.dailyChallenges || {};
+  const todayComplete = dailyState[today] === true;
+  const bonusXP = Math.floor(challengeData.xp * 2);
+  ['zone-map','level-view','trophy-view','stats-view','stories-view','grad-view','leaderboard-view'].forEach(id=>{document.getElementById(id).style.display='none';});
+  let html = '<div style="max-width:800px;margin:0 auto;padding:24px"><div style="text-align:center;margin-bottom:32px"><div style="font-size:4rem;margin-bottom:16px">🌟</div><h1 style="font-size:2rem;margin-bottom:8px;font-family:var(--font-head)">Daily Challenge</h1><p style="color:var(--text2);font-size:1rem">'+(todayComplete?'Already completed today! Come back tomorrow.':'Complete todays challenge for <span style="color:var(--gold);font-weight:700">'+bonusXP+' BONUS XP</span>')+'</p><div style="margin-top:12px;font-size:0.85rem;color:var(--text2)">'+today+' Resets at midnight UTC</div></div>';
+  if (todayComplete) {
+    const zone = ZONES.find(z => z.id === challengeData.zoneId);
+    html += '<div class="content-card" style="border-color:var(--gold);background:color-mix(in srgb,var(--gold) 8%,transparent)"><h2 style="color:var(--gold)">Challenge Completed!</h2><p style="color:var(--text);margin-top:8px">You earned <strong>'+bonusXP+' bonus XP</strong> from todays challenge:</p><div style="margin-top:16px;padding:16px;background:#00000030;border-radius:8px"><div style="font-size:0.8rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Zone '+zone.id+': '+zone.name+'</div><div style="font-size:1.2rem;font-weight:600">'+challengeData.emoji+' '+challengeData.title+'</div></div><div style="margin-top:24px;text-align:center"><button class="btn-primary" onclick="showView(\'map\')" style="--zone-color:var(--gold)">Return to Map</button></div></div>';
+  } else {
+    const zone = ZONES.find(z => z.id === challengeData.zoneId);
+    const level = zone.levels.find(l => l.id === challengeData.levelId);
+    html += '<div class="content-card" style="border-color:'+zone.color+'"><div style="font-size:0.8rem;color:'+zone.color+';text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Zone '+zone.id+': '+zone.name+' Level '+level.id+'</div><h2 style="font-family:var(--font-head)">'+level.emoji+' '+level.title+'</h2><p style="color:var(--text2);margin-top:8px;font-size:0.9rem">This challenge is from a level youve already completed. Prove you still remember it!</p></div>'+renderDailyChallengeArea(level, zone, bonusXP);
+  }
+  html += '<div style="margin-top:24px;text-align:center"><button class="btn-outline" onclick="showView(\'map\')">Back to Map</button></div></div>';
+  document.getElementById('main').innerHTML = html;
+  document.getElementById('main').scrollTop = 0;
+  window.scrollTo(0, 0);
+}
+
+function renderDailyChallengeArea(level, zone, bonusXP) {
+  const c = level.challenge;
+  const color = zone.color;
+  let html = '<div class="challenge-area" style="--zone-color:'+color+';border-color:'+color+'" id="daily-challenge-area"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2>Todays Challenge</h2><div style="color:var(--gold);font-weight:700;font-size:1.1rem">+'+bonusXP+' XP</div></div><div class="question">'+c.question+'</div>';
+  switch (c.type) {
+    case 'multiple-choice': html += renderMC(c, 'daily', color); break;
+    case 'drag-match': html += renderDragMatch(c, 'daily', color); break;
+    case 'ordering': html += renderOrdering(c, 'daily', color); break;
+    case 'fill-blank': html += renderFillBlank(c, 'daily', color); break;
+    case 'true-false': html += renderTrueFalse(c, 'daily', color); break;
+    case 'creative': html += renderCreative(c, 'daily', color); break;
+    case 'checklist': html += renderChecklist(c, 'daily', color); break;
+  }
+  html += '<button class="submit-btn" style="--zone-color:'+color+'" onclick="submitDailyChallenge(\''+level.id+'\','+bonusXP+')">Submit Challenge</button></div>';
+  return html;
+}
+
+function submitDailyChallenge(levelId, bonusXP) {
+  const originalLevel = state.currentLevel;
+  state.currentLevel = levelId;
+  let level = null;
+  for (const zone of ZONES) {
+    const found = zone.levels.find(l => l.id === levelId);
+    if (found) { level = found; break; }
+  }
+  if (!level) return;
+  const c = level.challenge;
+  let correct = false;
+  switch (c.type) {
+    case 'multiple-choice':
+      correct = selectedMC === c.correct; break;
+    case 'drag-match':
+      correct = c.pairs.every(p => {
+        const target = document.querySelector('.dd-target[data-id="'+p.target+'"]');
+        const item = target ? target.querySelector('.dd-item[data-id="'+p.item+'"]') : null;
+        return item !== null;
+      }); break;
+    case 'ordering':
+      const orderItems = document.querySelectorAll('.order-item');
+      const userOrder = Array.from(orderItems).map((el, idx) => parseInt(el.dataset.index));
+      correct = userOrder.every((val, idx) => val === c.correctOrder[idx]); break;
+    case 'fill-blank':
+      correct = c.blanks.every((b, i) => {
+        const input = document.getElementById('blank-'+i);
+        const userAnswer = input.value.trim().toLowerCase();
+        return b.answer.some(ans => ans.toLowerCase() === userAnswer);
+      }); break;
+    case 'true-false':
+      correct = tfScore === c.statements.length && tfAnswered === c.statements.length; break;
+    case 'creative':
+      const creative = document.getElementById('creative-answer');
+      correct = creative && creative.value.trim().length > 10; break;
+    case 'checklist':
+      const checkboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+      correct = Array.from(checkboxes).every((cb, i) => cb.checked === c.items[i].good); break;
+  }
+  state.currentLevel = originalLevel;
+  const area = document.getElementById('daily-challenge-area');
+  if (correct) {
+    state.xp += bonusXP;
+    const today = new Date().toISOString().split('T')[0];
+    if (!state.dailyChallenges) state.dailyChallenges = {};
+    state.dailyChallenges[today] = true;
+    if (!state.dailyStreak) state.dailyStreak = 0;
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    state.dailyStreak = state.dailyChallenges[yesterday] ? state.dailyStreak + 1 : 1;
+    saveState();
+    updateTopBar();
+    playSound('success');
+    area.innerHTML = '<div style="text-align:center;padding:32px"><div style="font-size:5rem;margin-bottom:16px">🎊</div><h2 style="color:var(--gold);font-size:1.8rem;margin-bottom:12px;font-family:var(--font-head)">Daily Challenge Complete!</h2><p style="color:var(--text);font-size:1.2rem;margin-bottom:8px">+'+bonusXP+' BONUS XP earned!</p><div style="margin-top:24px;padding:16px;background:var(--bg3);border-radius:12px;display:inline-block"><div style="font-size:2rem;color:var(--gold);margin-bottom:4px">🔥 '+state.dailyStreak+'</div><div style="font-size:0.85rem;color:var(--text2)">Day Streak</div></div><div style="margin-top:24px"><button class="btn-primary" onclick="showView(\'map\')" style="--zone-color:var(--gold)">Return to Map</button></div></div>';
+  } else {
+    playSound('error');
+    area.style.animation = 'shake 0.5s';
+    setTimeout(() => area.style.animation = '', 500);
+    const feedback = document.createElement('div');
+    feedback.style.cssText = 'color:var(--error);text-align:center;margin-top:16px;font-weight:600;font-size:0.95rem';
+    feedback.textContent = 'Not quite right. Try again!';
+    area.appendChild(feedback);
+    setTimeout(() => feedback.remove(), 2000);
+  }
+}
 
 init();
 </script>
