@@ -21,9 +21,13 @@
 - [x] `daily-challenge` — Auto-generated daily challenge from random levels with bonus XP.
 - [x] `mobile-gestures` — Swipe navigation between levels, touch-friendly drag & drop improvements.
 
-## Backlog (Ideas)
+**Status: Development queue complete! All 19 features shipped. 🎉**
 
-- AI-generated challenges based on latest agentic news
-- Integration with Smart Intel (link patterns to real-world signals)
-- Certificate generator (PDF) for completing all zones
-- Embed in LinkedIn learning path
+## Backlog (Future Ideas - Requires External Dependencies)
+
+- [ ] `ai-gen-challenges` — AI-generated challenges based on latest agentic news (requires LLM API integration)
+- [ ] `smart-intel-integration` — Link patterns to real-world signals from Smart Intel (requires API bridge)
+- [ ] `certificate-pdf` — Certificate generator (PDF) for completing all zones (requires jsPDF or similar)
+- [ ] `linkedin-embed` — Embed in LinkedIn learning path (requires LinkedIn API partnership)
+
+**Next Steps:** Production optimization, SEO, and public launch. No code work needed until new features are greenlit.
