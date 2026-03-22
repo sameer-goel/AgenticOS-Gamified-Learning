@@ -1,0 +1,702 @@
+/* ============================================
+   iOS 2026 DESIGN SYSTEM
+   Premium Apple aesthetic with glass morphism
+   ============================================ */
+
+/* Force iOS San Francisco font stack */
+:root {
+  --font-system: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, monospace;
+  
+  /* iOS 2026 Color Palette - Light Mode */
+  --ios-white: #FFFFFF;
+  --ios-off-white: #F5F5F7;
+  --ios-bg: #FAFAFA;
+  --ios-card-bg: rgba(255, 255, 255, 0.72);
+  --ios-elevated: rgba(255, 255, 255, 0.85);
+  
+  /* iOS 2026 Dark Mode */
+  --ios-dark-bg: #000814;
+  --ios-dark-surface: #1C1C1E;
+  --ios-dark-elevated: #2C2C2E;
+  --ios-dark-card: rgba(28, 28, 30, 0.72);
+  
+  /* iOS Accent Colors */
+  --ios-blue: #007AFF;
+  --ios-purple: #AF52DE;
+  --ios-green: #34C759;
+  --ios-orange: #FF9500;
+  --ios-pink: #FF2D55;
+  --ios-teal: #5AC8FA;
+  --ios-indigo: #5856D6;
+  
+  /* Text Colors */
+  --ios-text-primary: #1D1D1F;
+  --ios-text-secondary: #86868B;
+  --ios-text-tertiary: #C7C7CC;
+  
+  --ios-text-primary-dark: #F5F5F7;
+  --ios-text-secondary-dark: #98989D;
+  --ios-text-tertiary-dark: #636366;
+  
+  /* Shadows & Effects */
+  --ios-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --ios-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.05);
+  --ios-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08), 0 4px 6px rgba(0, 0, 0, 0.05);
+  --ios-shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+  
+  /* Border Radius */
+  --ios-radius-sm: 10px;
+  --ios-radius-md: 16px;
+  --ios-radius-lg: 20px;
+  --ios-radius-xl: 28px;
+  
+  /* Spring Physics Timing */
+  --ios-spring: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ios-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ios-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Override font stack globally */
+*,
+*::before,
+*::after {
+  font-family: var(--font-system) !important;
+}
+
+code, .mono, .font-mono, pre {
+  font-family: var(--font-mono) !important;
+}
+
+/* ============================================
+   LIGHT MODE (Default)
+   ============================================ */
+
+body {
+  background: var(--ios-bg);
+  color: var(--ios-text-primary);
+}
+
+/* Glass Morphism Effect */
+.glass {
+  background: var(--ios-card-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* Top Bar - iOS Style */
+#topbar {
+  background: var(--ios-elevated);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: var(--ios-shadow-sm);
+  height: 56px;
+  transition: all 0.3s var(--ios-ease);
+}
+
+#topbar .top-stats .stat {
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 20px;
+  padding: 6px 12px;
+  min-height: 32px;
+  transition: all 0.2s var(--ios-ease);
+}
+
+#topbar .top-stats .stat:active {
+  transform: scale(0.96);
+}
+
+/* Sidebar - iOS Style */
+#sidebar {
+  background: var(--ios-elevated);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.zone-item,
+.level-item,
+.sidebar-nav button {
+  border-radius: var(--ios-radius-sm);
+  min-height: 44px !important;  /* iOS touch target */
+  transition: all 0.25s var(--ios-ease);
+}
+
+.zone-item:hover,
+.level-item:hover:not(.locked),
+.sidebar-nav button:hover {
+  background: rgba(0, 0, 0, 0.04);
+  transform: translateX(2px);
+}
+
+.zone-item:active,
+.level-item:active:not(.locked),
+.sidebar-nav button:active {
+  transform: scale(0.98);
+}
+
+/* Zone Cards - Glass Morphism */
+.zone-card {
+  background: var(--ios-card-bg);
+  backdrop-filter: blur(10px) saturate(150%);
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--ios-radius-lg);
+  padding: 24px;
+  box-shadow: var(--ios-shadow-md);
+  transition: all 0.3s var(--ios-ease);
+}
+
+.zone-card:hover {
+  transform: scale(1.02) translateY(-4px);
+  box-shadow: var(--ios-shadow-lg);
+}
+
+.zone-card:active {
+  transform: scale(0.98);
+}
+
+/* Content Cards - Glass */
+.content-card,
+.challenge-area,
+.stat-card,
+.trophy-stat-card,
+.badge-card,
+.story-card {
+  background: var(--ios-card-bg);
+  backdrop-filter: blur(10px) saturate(150%);
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--ios-radius-md);
+  box-shadow: var(--ios-shadow-sm);
+  transition: all 0.3s var(--ios-ease);
+}
+
+/* Buttons - iOS Style */
+.btn-primary,
+.challenge-submit.btn-primary {
+  min-height: 44px !important;
+  border-radius: var(--ios-radius-sm);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: all 0.25s var(--ios-ease);
+  border: none;
+  box-shadow: var(--ios-shadow-sm);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ios-shadow-md);
+}
+
+.btn-primary:active {
+  transform: scale(0.95);
+}
+
+.btn-outline {
+  min-height: 44px !important;
+  border-radius: var(--ios-radius-sm);
+  border: 1.5px solid rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.02);
+  font-weight: 500;
+  transition: all 0.25s var(--ios-ease);
+}
+
+.btn-outline:hover {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.18);
+}
+
+.btn-outline:active {
+  transform: scale(0.96);
+}
+
+/* Multiple Choice Options - iOS Radio Style */
+.mc-option,
+.dd-item,
+.dd-target,
+.order-item,
+.tf-btn,
+.checklist-item {
+  min-height: 44px !important;
+  border-radius: var(--ios-radius-sm);
+  padding: 12px 16px;
+  transition: all 0.25s var(--ios-ease);
+  border: 1.5px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.mc-option:hover {
+  background: rgba(0, 122, 255, 0.04);
+  border-color: var(--ios-blue);
+  transform: translateX(2px);
+}
+
+.mc-option:active {
+  transform: scale(0.98);
+}
+
+.mc-option .radio {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  transition: all 0.2s var(--ios-ease);
+}
+
+.mc-option.selected .radio {
+  border-color: var(--ios-blue);
+  background: var(--ios-blue);
+}
+
+.mc-option.selected .radio::after {
+  content: '●';
+  color: white;
+  font-size: 10px;
+}
+
+/* Input Fields - iOS Style */
+.fill-blank-input,
+.creative-textarea,
+#mp-room-code,
+#mp-player-name {
+  min-height: 44px !important;
+  border-radius: var(--ios-radius-sm);
+  border: 1.5px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.8);
+  padding: 12px 16px;
+  font-size: 16px !important;  /* Prevent iOS zoom */
+  transition: all 0.3s var(--ios-ease);
+}
+
+.fill-blank-input:focus,
+.creative-textarea:focus {
+  border-color: var(--ios-blue);
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.12);
+  background: white;
+}
+
+/* Mobile Bottom Tab Bar - iOS Style */
+#mobile-tabs {
+  background: var(--ios-elevated);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04);
+  height: 64px;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+#mobile-tabs button {
+  min-height: 48px !important;
+  min-width: 48px !important;
+  color: var(--ios-text-secondary);
+  transition: all 0.2s var(--ios-ease);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+#mobile-tabs button.active {
+  color: var(--ios-blue);
+}
+
+#mobile-tabs button .tab-icon {
+  font-size: 24px;
+  margin-bottom: 2px;
+}
+
+#mobile-tabs button:active {
+  transform: scale(0.92);
+}
+
+/* Progress Bars - iOS Circular Style Hint */
+.zone-progress,
+.badge-progress,
+.stat-bar {
+  height: 6px;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.zone-progress-fill,
+.badge-progress-fill,
+.stat-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s var(--ios-bounce);
+}
+
+/* Animations - iOS Spring Physics */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Apply animations */
+.zone-card,
+.content-card,
+.badge-card {
+  animation: fadeIn 0.4s var(--ios-ease);
+}
+
+.mc-option,
+.dd-item,
+.story-card {
+  animation: slideIn 0.3s var(--ios-ease) backwards;
+}
+
+.mc-option:nth-child(1) { animation-delay: 0s; }
+.mc-option:nth-child(2) { animation-delay: 0.05s; }
+.mc-option:nth-child(3) { animation-delay: 0.1s; }
+.mc-option:nth-child(4) { animation-delay: 0.15s; }
+
+/* ============================================
+   DARK MODE
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: var(--ios-dark-bg);
+    color: var(--ios-text-primary-dark);
+  }
+  
+  #topbar,
+  #sidebar {
+    background: var(--ios-dark-elevated);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+  
+  #topbar .top-stats .stat {
+    background: rgba(255, 255, 255, 0.06);
+  }
+  
+  .zone-item:hover,
+  .level-item:hover:not(.locked),
+  .sidebar-nav button:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+  
+  .zone-card,
+  .content-card,
+  .challenge-area,
+  .stat-card,
+  .trophy-stat-card,
+  .badge-card,
+  .story-card {
+    background: var(--ios-dark-card);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .mc-option,
+  .dd-item,
+  .dd-target,
+  .order-item,
+  .tf-btn,
+  .checklist-item {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: var(--ios-text-primary-dark);
+  }
+  
+  .mc-option:hover {
+    background: rgba(0, 122, 255, 0.12);
+    border-color: var(--ios-blue);
+  }
+  
+  .fill-blank-input,
+  .creative-textarea {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.14);
+    color: var(--ios-text-primary-dark);
+  }
+  
+  .fill-blank-input:focus,
+  .creative-textarea:focus {
+    background: rgba(255, 255, 255, 0.10);
+    border-color: var(--ios-blue);
+  }
+  
+  #mobile-tabs {
+    background: var(--ios-dark-elevated);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+  
+  .zone-progress,
+  .badge-progress,
+  .stat-bar {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* ============================================
+   MOBILE RESPONSIVENESS
+   ============================================ */
+
+@media (max-width: 768px) {
+  /* Ensure proper spacing */
+  #main {
+    padding: 16px !important;
+    margin-left: 0 !important;
+    margin-bottom: 64px !important;
+  }
+  
+  /* Stack zone cards */
+  #zone-map {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  
+  /* Make drag-drop single column */
+  .dd-container {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  
+  /* Trophy grid */
+  .trophy-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+  
+  /* Stats grid */
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  
+  /* Smaller cards */
+  .zone-card,
+  .content-card {
+    padding: 16px !important;
+  }
+  
+  /* Hide sidebar on mobile */
+  #sidebar {
+    transform: translateX(-100%);
+    z-index: 1000;
+  }
+  
+  #sidebar.open {
+    transform: translateX(0);
+    box-shadow: var(--ios-shadow-xl);
+  }
+  
+  /* Show mobile tabs */
+  #mobile-tabs {
+    display: flex !important;
+  }
+  
+  /* Font size adjustments */
+  .map-header h1 {
+    font-size: 1.6rem !important;
+  }
+  
+  .level-header h1 {
+    font-size: 1.4rem !important;
+  }
+  
+  /* Touch optimization */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+  
+  button,
+  .mc-option,
+  .zone-card,
+  .story-card {
+    -webkit-tap-highlight-color: rgba(0, 122, 255, 0.1);
+  }
+}
+
+@media (max-width: 375px) {
+  /* Extra small phones */
+  #main {
+    padding: 12px !important;
+  }
+  
+  .zone-card,
+  .content-card,
+  .challenge-area {
+    padding: 14px !important;
+    border-radius: var(--ios-radius-md) !important;
+  }
+  
+  #topbar {
+    padding: 0 12px !important;
+  }
+  
+  .trophy-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+/* Focus visible for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid var(--ios-blue);
+  outline-offset: 2px;
+  border-radius: var(--ios-radius-sm);
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast adjustments */
+@media (prefers-contrast: high) {
+  .zone-card,
+  .content-card,
+  .mc-option,
+  .btn-outline {
+    border-width: 2px;
+  }
+}
+
+/* ============================================
+   POLISH & REFINEMENTS
+   ============================================ */
+
+/* Smooth scrolling with iOS momentum */
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+#sidebar,
+#main {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Safe area insets for iOS notch */
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Selection color */
+::selection {
+  background: rgba(0, 122, 255, 0.2);
+  color: inherit;
+}
+
+/* Smooth font rendering */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Remove default button/input appearance on iOS */
+input,
+textarea,
+button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: var(--ios-radius-sm);
+}
+
+/* Badge celebration overlay */
+#badge-celebration {
+  backdrop-filter: blur(40px) saturate(120%);
+  -webkit-backdrop-filter: blur(40px) saturate(120%);
+  background: rgba(0, 0, 0, 0.6);
+}
+
+@media (prefers-color-scheme: dark) {
+  #badge-celebration {
+    background: rgba(0, 0, 0, 0.85);
+  }
+}
+
+/* Confetti canvas stays on top */
+#confetti-canvas {
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Trophy case improvements */
+.badge-card.earned:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: var(--ios-shadow-lg);
+}
+
+/* Share modal */
+#share-card-modal {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.share-card-container {
+  background: var(--ios-elevated);
+  border-radius: var(--ios-radius-xl);
+  box-shadow: var(--ios-shadow-xl);
+  animation: scaleIn 0.4s var(--ios-spring);
+}
+
+@media (prefers-color-scheme: dark) {
+  .share-card-container {
+    background: var(--ios-dark-elevated);
+  }
+}
+
+/* Leaderboard */
+.lb-table {
+  border-radius: var(--ios-radius-md);
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  .lb-table {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Final touch - all interactive elements get spring animation */
+button,
+.zone-card,
+.mc-option,
+.badge-card,
+.story-card,
+.zone-item,
+.level-item {
+  will-change: transform;
+  transform: translateZ(0);
+}
