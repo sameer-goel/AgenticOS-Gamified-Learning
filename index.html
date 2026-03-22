@@ -284,6 +284,7 @@ button{font-family:var(--font-body);cursor:pointer;border:none;background:none;c
 #mobile-tabs button.active{color:var(--text)}
 #mobile-tabs button .tab-icon{font-size:1.2rem}
 
+/* Enhanced mobile responsiveness fixes */
 @media(max-width:1024px){
   #sidebar{transform:translateX(-100%)}
   #sidebar.open{transform:translateX(0)}
@@ -291,14 +292,63 @@ button{font-family:var(--font-body);cursor:pointer;border:none;background:none;c
   #mobile-menu{display:block}
 }
 @media(max-width:768px){
+  /* Force display and fix layout */
   #sidebar{display:none}
   #mobile-menu{display:none}
   #mobile-tabs{display:flex}
-  #main{margin-left:0;margin-bottom:56px;padding:16px}
+  #main{margin-left:0!important;margin-bottom:56px;padding:16px;display:block!important;min-height:calc(100vh - 112px)}
+  
+  /* Ensure zone map and level view are visible */
+  #zone-map{display:grid!important;width:100%;min-height:50vh}
+  #level-view{display:block;width:100%;min-height:50vh}
+  
+  /* Make cards stack vertically on mobile */
+  .zone-card{min-height:auto;margin-bottom:12px}
+  .map-header h1{font-size:1.4rem}
+  .map-header p{font-size:0.85rem}
+  
+  /* Ensure buttons are touch-friendly (44px minimum) */
+  button{min-height:44px;min-width:44px;padding:12px 16px}
+  .mc-option{min-height:44px;padding:12px 16px}
+  .dd-item{min-height:44px;padding:12px 16px}
+  .dd-target{min-height:44px;padding:12px 16px}
+  .order-item{min-height:44px;padding:12px 16px}
+  .tf-btn{min-height:44px;padding:10px 24px}
+  .checklist-item{min-height:44px;padding:12px 16px}
+  .level-item{min-height:44px;padding:10px 12px 10px 32px}
+  .zone-item{min-height:44px;padding:10px 12px}
+  .sidebar-nav button{min-height:44px;padding:12px 16px}
+  
+  /* Fix overflow issues */
+  body{overflow-x:hidden}
+  #main{overflow-x:hidden}
+  .content-card{overflow-x:hidden}
+  
+  /* Top bar adjustments */
+  #topbar{height:56px;flex-wrap:nowrap}
+  .top-stats{gap:8px}
   .top-stats .stat.hide-mobile{display:none}
+  
+  /* Grid adjustments */
   .dd-container{grid-template-columns:1fr}
   .trophy-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
   .grad-stats{grid-template-columns:1fr}
+  
+  /* Text size adjustments for readability */
+  body{font-size:16px}
+  .level-header h1{font-size:1.3rem}
+  .content-card p{font-size:0.95rem;line-height:1.6}
+}
+
+/* Extra small screens (320px width) */
+@media(max-width:375px){
+  #main{padding:12px}
+  .zone-card{padding:16px}
+  .content-card{padding:16px}
+  .challenge-area{padding:16px}
+  #topbar{padding:0 12px}
+  .top-stats{gap:6px}
+  button{font-size:0.9rem}
 }
 
 /* ===== LEADERBOARD VIEW ===== */
@@ -2718,14 +2768,23 @@ function downloadShareCard(){
 
 function init(){
   loadState();
-  document.getElementById('sound-toggle').textContent=state.soundOn?'ð':'ð';
+  document.getElementById('sound-toggle').textContent=state.soundOn?'🔊':'🔇';
   updateTopBar();
   renderSidebar();
   // Reset TF state
   tfScore=0;tfAnswered=0;selectedMC=-1;
   // Check if graduation
   if(state.completedLevels.length>=51){
+    showView('graduation');
+  } else {
     showView('map');
+  }
+  // Theme setup
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  updateThemeToggle();
+}
+
 // ===== MOBILE GESTURES =====
 let touchStartX = 0;
 let touchStartY = 0;
